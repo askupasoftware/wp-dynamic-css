@@ -1,0 +1,14 @@
+{
+    "name": "askupa-software/wp-dynamic-css",
+    "description": "Render CSS using dynamic data from WordPress",
+    "type": "wordpress-plugin",
+    "keywords": ["wordpress","plugin","dynamic css","dynamic style"],
+    "homepage": "https://github.com/askupasoftware/wp-dynamic-css",
+    "authors": [
+        {
+            "name": "Askupa Software",
+            "email": "contact@askupasoftware.com"
+        }
+    ],
+    "require": {}
+}
