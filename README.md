@@ -28,7 +28,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
 
 ## Basic Example
 
-**`functions.php`**
+First, add this to your `functions.php` file:
 
 ```php
 // 1. Load the library
@@ -43,9 +43,11 @@ wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
 
 // 3. Enqueue the stylesheet
 wp_dynamic_css_enqueue( 'my-style.css' );
+
+// 4. Nope, only three steps
 ```
 
-**`my-style.css`**
+Then, create a file called `my-style.css` and write this in it:
 
 ```css
 body {
@@ -53,8 +55,9 @@ body {
 }
 ```
 
+In the above example, the stylesheet will be automatically rendered and printed to the `<head>` of the document. The value of `$body_bg_color` will be replaced by the value of `get_theme_mod('body_bg_color')`.
 
-In the above example...
+Simple, right?
 
 ## Installation
 
