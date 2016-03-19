@@ -41,8 +41,8 @@ function my_dynamic_css_callback( $var_name )
 }
 wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
 
-// 3. Enqueue the stylesheet
-wp_dynamic_css_enqueue( 'my-style.css' );
+// 3. Enqueue the stylesheet (using an absolute path, not URL)
+wp_dynamic_css_enqueue( 'path/to/my-style.css' );
 
 // 4. Nope, only three steps
 ```
