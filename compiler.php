@@ -54,7 +54,7 @@ class DynamicCSSCompiler
      */
     public function init()
     {
-        add_action( 'wp_print_styles', array( $this, 'print_compiled_style' ) );
+        add_action('wp_print_styles', array($this, 'print_compiled_style'));
     }
     
     /**
@@ -62,7 +62,7 @@ class DynamicCSSCompiler
      * 
      * @param type $path The absolute path to the dynamic style
      */
-    public function enqueue_style( $path )
+    public function enqueue_style($path)
     {
         $this->styles[] = $path;
     }
@@ -73,12 +73,12 @@ class DynamicCSSCompiler
     public function print_compiled_style()
     {
         ob_start();
-        foreach( $this->styles as $style ) 
+        foreach ($this->styles as $style) 
         {
             include $style;
             echo "\n";
         }
-        $css = $this->parse_css( ob_get_clean() );
+        $css = $this->parse_css(ob_get_clean());
         include 'style.phtml';
     }
     
@@ -93,10 +93,10 @@ class DynamicCSSCompiler
      * @return string The compiled CSS after converting the variables to their 
      * corresponding values
      */
-    public function parse_css( $css )
+    public function parse_css($css)
     {   
         return preg_replace_callback('#\$([\w]+)#', function($matches) {
-            return apply_filters( 'wp_dynamic_css_get_variable_value', $matches[1]);
+            return apply_filters('wp_dynamic_css_get_variable_value', $matches[1]);
         }, $css);
     }
 }
