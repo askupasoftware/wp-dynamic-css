@@ -14,6 +14,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
 ## Contents
 
 * [Overview](#overview)
+    * [Basic Example](#basic-example)
 * [Installation](#installation)
     * [Via Composer](#via-composer)
     * [Via WordPress.org](#via-wordpressorg)
@@ -26,7 +27,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
 
 **WordPress Dynamic CSS** is a lightweight library for generating CSS stylesheets from dynamic content (i.e. content that can be modified by the user). The most obvious use case for this library is for creating stylesheets based on Customizer options. Using the special dynamic CSS syntax you can write CSS rules with variables instead of static values.
 
-## Basic Example
+### Basic Example
 
 First, add this to your `functions.php` file:
 
@@ -62,6 +63,27 @@ Simple, right?
 ## Installation
 
 ### Via Composer
+
+If you are using the command line:
+```$ composer require askupa-software/wp-dynamic-css:dev-master```
+
+Or simply add the following to your `composer.json` file:
+```javascript
+"require": {
+     "askupa-software/wp-dynamic-css": "dev-master"
+ }
+```
+And run the command `composer install`
+
+This will install the package in the directory `wp-content/plugins`. For custom install path, add this to your `composer.json` file:
+
+```javascript
+"extra": {
+     "installer-paths": {
+         "vendor/askupa-software/{$name}": ["askupa-software/wp-dynamic-css"]
+     }
+ }
+```
 
 ### Via WordPress.org
 
