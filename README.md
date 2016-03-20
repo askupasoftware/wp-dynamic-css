@@ -99,7 +99,9 @@ require_once 'path/to/wp-dynamic-css/bootstrap.php';
 
 ## Dynamic CSS Syntax
 
-The only difference between regular CSS syntax and the dynamic CSS syntax is that the latter allows you to use variables with the syntax `$my_variable_name`. Any variable in the dynamic CSS file is replaced by a value that is retrieved by a custom 'value callback' function. For example:
+This library allows you to use special CSS syntax that is similar to regular CSS syntax with added support for variables with the syntax `$my_variable_name`. Since these variables are replaced by values during run time (when the page loads), files that are using this syntax are therefore called **dynamic CSS** files. Any variable in the dynamic CSS file is replaced by a value that is retrieved by a custom 'value callback' function. 
+
+A **dynamic CSS** file will look exactly like a regular CSS file, only with variables. For example:
 
 ```css
 body {
@@ -113,7 +115,60 @@ Future releases may support a more compex syntax, so any suggestions are welcome
 
 ## Enqueueing Dynamic Stylesheets
 
+To enqueue a dynamic CSS file, call the function `wp_dynamic_css_enqueue` and pass it the **absolute path** to your CSS file:
+
+```php
+wp_dynamic_css_enqueue('path/to/dynamic-style.css');
+```
+
+This will print the contents of `dynamic-style.css` into the document `<head>` section after replacing all the variables to their values using the given callback function set by `wp_dynamic_css_set_callback()`.
+
 ## Setting the Value Callback
+
+The example given in the overview section uses the `get_theme_mod()` function to retrieve the value of the variables:
+
+```php
+function my_dynamic_css_callback( $var_name )
+{
+   return get_theme_mod($var_name);
+}
+wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
+```
+
+However, the `get_theme_mod()` function also takes a second argument, which is the default value to be used when the modification name does not exists (e.g. no changes were made in Customizer since the theme was activated).
+
+In that case, we can tweak our callback function to return default values as well:
+
+```php
+$theme_mod_defaults = array(
+   'body_bg_color': '#fff',
+   'body_text_color': 'black'
+);
+
+function my_dynamic_css_callback( $var_name )
+{
+   return get_theme_mod($var_name, @$theme_mod_defaults[$var_name]);
+}
+wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
+```
+
+Your CSS file can will look something like this:
+
+```css
+body {
+   background-color: $body_bg_color;
+   color: $body_text_color;
+}
+```
+
+Which will be compiled to this (provided that no changes were made by the user in Customizer):
+
+```css
+body {
+   background-color: #fff;
+   color: black;
+}
+```
 
 ## TODO
 
