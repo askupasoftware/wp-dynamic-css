@@ -20,7 +20,7 @@
  * Domain Path:     /languages
  */
 
-require_once 'renderer.php';
+require_once 'compiler.php';
 
 if( !function_exists('wp_dynamic_css_enqueue') )
 {
@@ -34,7 +34,7 @@ if( !function_exists('wp_dynamic_css_enqueue') )
      */
     function wp_dynamic_css_enqueue( $path )
     {
-        $dcss = DynamicCSSRenderer::get_instance();
+        $dcss = DynamicCSSCompiler::get_instance();
         $dcss->enqueue_style( $path );
     }
 }

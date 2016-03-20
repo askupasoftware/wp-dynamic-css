@@ -8,7 +8,7 @@
  */
 
 /**
- * Dynamic CSS Renderer Utility Class
+ * Dynamic CSS Compiler Utility Class
  * 
  * 
  * Dynamic CSS Syntax
@@ -21,7 +21,7 @@
  * is passed the variable name without the dollar sign, which can be used with
  * get_option() or get_theme_mod() etc.
  */
-class DynamicCSSRenderer
+class DynamicCSSCompiler
 {
     /**
      * @var Singleton The reference to *Singleton* instance of this class
@@ -50,7 +50,7 @@ class DynamicCSSRenderer
     }
     
     /**
-     * Initiate the renderer by hooking to wp_print_styles
+     * Initiate the compiler by hooking to wp_print_styles
      */
     public function init()
     {
