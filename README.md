@@ -2,10 +2,10 @@
 
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://raw.githubusercontent.com/aristath/kirki/master/LICENSE)
 
-**Contributors:** ykadosh
-**Tags:** theme, mods, wordpress, dynamic, css, stylesheet
-**Tested up to:** 4.4.2
-**Stable tag:** 1.0.0
+**Contributors:** ykadosh  
+**Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
+**Tested up to:** 4.4.2  
+**Stable tag:** 1.0.0  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -25,7 +25,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
 
 ## Overview
 
-**WordPress Dynamic CSS** is a lightweight library for generating CSS stylesheets from dynamic content (i.e. content that can be modified by the user). The most obvious use case for this library is for creating stylesheets based on Customizer options. Using the special dynamic CSS syntax you can write CSS rules with variables instead of static values.
+**WordPress Dynamic CSS** is a lightweight library for generating CSS stylesheets from dynamic content (i.e. content that can be modified by the user). The most obvious use case for this library is for creating stylesheets based on Customizer options. Using the special dynamic CSS syntax you can write CSS rules with variables that will be replaced by static values using a custom callback function that you provide.
 
 ### Basic Example
 
@@ -87,11 +87,35 @@ This will install the package in the directory `wp-content/plugins`. For custom 
 
 ### Via WordPress.org
 
+Coming soon
+
 ### Manually
 
+[Download the package](https://github.com/askupasoftware/wp-dynamic-css/archive/master.zip) from github and include `bootstrap.php` in your project:
+
+```php
+require_once 'path/to/wp-dynamic-css/bootstrap.php';
+```
+
 ## Dynamic CSS Syntax
+
+The only difference between regular CSS syntax and the dynamic CSS syntax is that the latter allows you to use variables with the syntax `$my_variable_name`. Any variable in the dynamic CSS file is replaced by a value that is retrieved by a custom 'value callback' function. For example:
+
+```css
+body {
+   background-color: $body_bg_color;
+}
+```
+
+During run time, this file will be compiled into regular CSS by replacing all the variables to their corresponding values by calling the 'value callback' function and passing the variable name (without the $ sign) to that function.
+
+Future releases may support a more compex syntax, so any suggestions are welcome. You can make a suggestion by creating an issue or submitting a pull request.
 
 ## Enqueueing Dynamic Stylesheets
 
 ## Setting the Value Callback
 
+## TODO
+
+* Add support for multiple value callback functions
+* Add support for loading the rendered CSS externally instead of printing to the document head
