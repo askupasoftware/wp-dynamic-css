@@ -57,7 +57,7 @@ body {
 }
 ```
 
-In the above example, the stylesheet will be automatically rendered and printed to the `<head>` of the document. The value of `$body_bg_color` will be replaced by the value of `get_theme_mod('body_bg_color')`.
+In the above example, the stylesheet will be automatically compiled and printed to the `<head>` of the document. The value of `$body_bg_color` will be replaced by the value of `get_theme_mod('body_bg_color')`.
 
 Now, let's say that `get_theme_mod('body_bg_color')` returns the value `#fff`, then `my-style.css` will be compiled to:
 
@@ -184,5 +184,5 @@ body {
 ## TODO
 
 * Add support for multiple value callback functions
-* Add support for loading the rendered CSS externally instead of printing to the document head
+* Add support for loading the compiled CSS externally instead of printing to the document head
 * Add support for caching

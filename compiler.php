@@ -29,7 +29,7 @@ class DynamicCSSCompiler
     private static $instance;
     
     /**
-     * @var array The list of dynamic styles paths to render
+     * @var array The list of dynamic styles paths to compile
      */
     private $styles = array();
     
@@ -54,11 +54,11 @@ class DynamicCSSCompiler
      */
     public function init()
     {
-        add_action( 'wp_print_styles', array( $this, 'print_rendered_style' ) );
+        add_action( 'wp_print_styles', array( $this, 'print_compiled_style' ) );
     }
     
     /**
-     * Add a style path to the pool of styles to be rendered
+     * Add a style path to the pool of styles to be compiled
      * 
      * @param type $path The absolute path to the dynamic style
      */
@@ -70,7 +70,7 @@ class DynamicCSSCompiler
     /**
      * Parse all styles in $this->styles and print them
      */
-    public function print_rendered_style()
+    public function print_compiled_style()
     {
         ob_start();
         foreach( $this->styles as $style ) 
@@ -87,10 +87,10 @@ class DynamicCSSCompiler
      * corresponding values retrieved by applying the filter 
      * wp_dynamic_css_get_variable_value.
      * 
-     * @param string $css A string containing dynamic CSS (pre-rendered CSS with 
+     * @param string $css A string containing dynamic CSS (pre-compiled CSS with 
      * variables)
      * @uses wp_dynamic_css_get_variable_value filter
-     * @return string The rendered CSS after converting the variables to their 
+     * @return string The compiled CSS after converting the variables to their 
      * corresponding values
      */
     public function parse_css( $css )

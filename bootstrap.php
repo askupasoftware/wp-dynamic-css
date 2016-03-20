@@ -2,7 +2,7 @@
 /**
  * WordPress Dynamic CSS
  *
- * Render CSS using dynamic data from WordPress
+ * Dynamic CSS compiler for WordPress
  *
  * @package   wp-dynamic-css
  * @author    Askupa Software <contact@askupasoftware.com>
@@ -12,7 +12,7 @@
  * @wordpress-plugin
  * Plugin Name:     WordPress Dynamic CSS
  * Plugin URI:      https://github.com/askupasoftware/wp-dynamic-css
- * Description:     Render CSS using dynamic data from WordPress
+ * Description:     Dynamic CSS compiler for WordPress
  * Version:         1.0.0
  * Author:          Askupa Software
  * Author URI:      http://www.askupasoftware.com
