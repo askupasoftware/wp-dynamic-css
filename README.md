@@ -58,6 +58,14 @@ body {
 
 In the above example, the stylesheet will be automatically rendered and printed to the `<head>` of the document. The value of `$body_bg_color` will be replaced by the value of `get_theme_mod('body_bg_color')`.
 
+Now, let's say that `get_theme_mod('body_bg_color')` returns the value `#fff`, then `my-style.css` will be compiled to:
+
+```css
+body {
+   background-color: #fff;
+}
+```
+
 Simple, right?
 
 ## Installation
@@ -122,6 +130,8 @@ wp_dynamic_css_enqueue('path/to/dynamic-style.css');
 ```
 
 This will print the contents of `dynamic-style.css` into the document `<head>` section after replacing all the variables to their values using the given callback function set by `wp_dynamic_css_set_callback()`.
+
+If multiple calls to `wp_dynamic_css_enqueue()` are made with different CSS files, then their contents will be appended to the same `<style>` section in the document `<head>`.
 
 ## Setting the Value Callback
 
