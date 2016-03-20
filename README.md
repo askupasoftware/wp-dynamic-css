@@ -1,6 +1,6 @@
 # wp-dynamic-css
 
-[![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://raw.githubusercontent.com/aristath/kirki/master/LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg)](https://raw.githubusercontent.com/askupasoftware/wp-dynamic-css/master/LICENSE)
 
 **Contributors:** ykadosh  
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
