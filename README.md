@@ -185,3 +185,4 @@ body {
 
 * Add support for multiple value callback functions
 * Add support for loading the rendered CSS externally instead of printing to the document head
+* Add support for caching
