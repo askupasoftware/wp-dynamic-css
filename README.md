@@ -163,7 +163,7 @@ function my_dynamic_css_callback( $var_name )
 wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
 ```
 
-Your CSS file can will look something like this:
+Your CSS file can look something like this:
 
 ```css
 body {
