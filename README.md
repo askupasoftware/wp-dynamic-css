@@ -6,8 +6,8 @@
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
 **Tested up to:** 4.4.2  
 **Stable tag:** 1.0.0  
-**License:** GPLv2 or later  
-**License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
+**License:** GPLv3 or later  
+**License URI:** http://www.gnu.org/licenses/gpl-3.0.html
 
 A library for generating static stylesheets from dynamic content, to be used in WordPress themes and plugins.
 
