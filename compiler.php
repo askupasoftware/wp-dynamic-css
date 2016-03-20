@@ -31,7 +31,7 @@ class DynamicCSSCompiler
     /**
      * @var array The list of dynamic styles paths to compile
      */
-    private $styles = array();
+    private $stylesheets = array();
     
     /**
      * Returns the *Singleton* instance of this class.
@@ -62,21 +62,28 @@ class DynamicCSSCompiler
      * 
      * @param type $path The absolute path to the dynamic style
      */
-    public function enqueue_style( $path )
+    public function enqueue_style( $path, $print )
     {
-        $this->styles[] = $path;
+        $this->stylesheets[] = array(
+            'path'  => $path,
+            'print' => $print
+        );
     }
     
     /**
-     * Parse all styles in $this->styles and print them
+     * Parse all styles in $this->stylesheets and print them if the flag 'print'
+     * is set to true
      */
     public function print_compiled_style()
     {
         ob_start();
-        foreach( $this->styles as $style ) 
+        foreach( $this->stylesheets as $style ) 
         {
-            include $style;
-            echo "\n";
+            if( true === $style['print'] )
+            {
+                include $style;
+                echo "\n";
+            }
         }
         $css = $this->parse_css( ob_get_clean() );
         include 'style.phtml';
