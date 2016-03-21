@@ -22,6 +22,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
     * [Manually](#manually)
 * [Dynamic CSS Syntax](#dynamic-css-syntax)
 * [Enqueueing Dynamic Stylesheets](#enqueueing-dynamic-stylesheets)
+    * [Loading the Compiled CSS as an External Stylesheet](#loading-the-compiled-css-as-an-external-stylesheet)
 * [Setting the Value Callback](#setting-the-value-callback)
 
 ## Overview
@@ -134,6 +135,18 @@ This will print the contents of `dynamic-style.css` into the document `<head>` s
 
 If multiple calls to `wp_dynamic_css_enqueue()` are made with different CSS files, then their contents will be appended to the same `<style>` section in the document `<head>`.
 
+### Loading the Compiled CSS as an External Stylesheet
+
+Instead of printing the compiled CSS to the head of the document, you can alternatively load it as an external stylesheet by setting the second parameter to `false`:
+
+```php
+wp_dynamic_css_enqueue('path/to/dynamic-style.css', false);
+```
+
+This will reduce the loading time of your document since the call to the compiler will be made asynchronously as an http request. Additionally, styelsheets that are loaded externally can be cached by the browser, as opposed to stylesheets that are printed to the head.
+
+The disadvantage of this approach is that the Customizer's live preview will not show the changes take effect without manually reloading the page.
+
 ## Setting the Value Callback
 
 The example given in the overview section uses the `get_theme_mod()` function to retrieve the value of the variables:
@@ -183,6 +196,6 @@ body {
 
 ## TODO
 
+* ~~Add support for loading the compiled CSS externally instead of printing to the document head~~ (Added in 1.0.1)
 * Add support for multiple value callback functions
-* Add support for loading the compiled CSS externally instead of printing to the document head
 * Add support for caching
