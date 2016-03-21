@@ -13,7 +13,7 @@
  * Plugin Name:     WordPress Dynamic CSS
  * Plugin URI:      https://github.com/askupasoftware/wp-dynamic-css
  * Description:     Dynamic CSS compiler for WordPress
- * Version:         1.0.0
+ * Version:         1.0.1
  * Author:          Askupa Software
  * Author URI:      http://www.askupasoftware.com
  * Text Domain:     wp-dynamic-css
@@ -21,39 +21,14 @@
  */
 
 require_once 'compiler.php';
+require_once 'functions.php';
 
-if( !function_exists('wp_dynamic_css_enqueue') )
-{
-    /**
-     * Enqueue a dynamic stylesheet
-     * 
-     * This will print the compiled version of the stylesheet to the document's
-     * <head> section.
-     * 
-     * @param string $path The absolute path to the dynamic CSS file
-     */
-    function wp_dynamic_css_enqueue( $path )
-    {
-        $dcss = DynamicCSSCompiler::get_instance();
-        $dcss->enqueue_style( $path );
-    }
-}
-
-if( !function_exists('wp_dynamic_css_set_callback') )
-{
-    /**
-     * Set the value retrieval callback function
-     * 
-     * Set a callback function that will be used to get the values of the 
-     * variables when the dynamic CSS file is compiled. The function accepts 1 
-     * parameter which is the name of the variable, without the $ sign
-     * 
-     * @param string|array $callback A callback (or "callable" as of PHP 5.4) 
-     * can either be a reference to a function name or method within an 
-     * class/object.
-     */
-    function wp_dynamic_css_set_callback( $callback )
-    {
-        add_filter( 'wp_dynamic_css_get_variable_value', $callback );
-    }
-}
+/**
+ * The following actions are used for printing or loading the compiled 
+ * stylesheets externally.
+ */
+$dcss = DynamicCSSCompiler::get_instance();
+add_action( 'wp_print_styles', array( $dcss, 'compile_printed_styles' ) );
+add_action( 'wp_enqueue_scripts', array( $dcss, 'wp_enqueue_style' ) );
+add_action( 'wp_ajax_wp_dynamic_css', array( $dcss, 'compile_external_styles' ) );
+add_action( 'wp_ajax_nopriv_wp_dynamic_css', array( $dcss, 'compile_external_styles' ) );
