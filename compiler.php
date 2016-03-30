@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   WordPress Dynamic CSS
- * @version   1.0.1
+ * @version   1.0.2
  * @author    Askupa Software <contact@askupasoftware.com>
  * @link      https://github.com/askupasoftware/wp-dynamic-css
  * @copyright 2016 Askupa Software
@@ -32,6 +32,11 @@ class DynamicCSSCompiler
      * @var array The list of dynamic styles paths to compile
      */
     private $stylesheets = array();
+    
+    /**
+     * @var array 
+     */
+    private $callbacks = array();
     
     /**
      * Returns the *Singleton* instance of this class.
@@ -67,7 +72,7 @@ class DynamicCSSCompiler
      */
     public function compile_printed_styles()
     {
-        $precompiled_css = '';
+        $compiled_css = '';
         $styles = array_filter($this->stylesheets, array( $this, 'filter_print' ) );
         
         // Bail if there are no styles to be printed
@@ -75,9 +80,10 @@ class DynamicCSSCompiler
         
         foreach( $styles as $style ) 
         {
-            $precompiled_css .= $this->get_file_contents( $style['path'] )."\n";
+            $css = $this->get_file_contents( $style['path'] );
+            $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
         }
-        $css = $this->compile_css( $precompiled_css );
+        
         echo "<style id=\"wp-dynamic-css\">\n";
         include 'style.phtml';
         echo "</style>";
@@ -90,14 +96,15 @@ class DynamicCSSCompiler
     public function compile_external_styles()
     {
         header( "Content-type: text/css; charset: UTF-8" );
-        $precompiled_css = '';
+        $compiled_css = '';
         $styles = array_filter($this->stylesheets, array( $this, 'filter_external' ) );
         
         foreach( $styles as $style ) 
         {
-            $precompiled_css .= $this->get_file_contents( $style['path'] )."\n";
+            $css = $this->get_file_contents( $style['path'] );
+            $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
         }
-        $css = $this->compile_css( $precompiled_css );
+        
         include 'style.phtml';
         wp_die();
     }
@@ -105,18 +112,31 @@ class DynamicCSSCompiler
     /**
      * Add a style path to the pool of styles to be compiled
      * 
+     * @param string $handle The stylesheet's name/id
      * @param string $path The absolute path to the dynamic style
      * @param boolean $print Whether to print the compiled CSS to the document 
      * head, or include it as an external CSS file
      */
-    public function enqueue_style( $path, $print )
+    public function enqueue_style( $handle, $path, $print )
     {
         $this->stylesheets[] = array(
+            'handle'=> $handle,
             'path'  => $path,
             'print' => $print
         );
     }
     
+    /**
+     * Register a value retrieval function and associate it with the given handle
+     * 
+     * @param type $handle The stylesheet's name/id
+     * @param type $callback
+     */
+    public function register_callback( $handle, $callback )
+    {
+        $this->callbacks[$handle] = $callback;
+    }
+
     /**
      * This filter is used to return only the styles that are set to be printed
      * in the document head
@@ -156,19 +176,19 @@ class DynamicCSSCompiler
     
     /**
      * Parse the given CSS string by converting the variables to their 
-     * corresponding values retrieved by applying the filter 
-     * wp_dynamic_css_get_variable_value.
+     * corresponding values retrieved by applying the callback function
      * 
+     * @param callable $callback A function that replaces the variables with 
+     * their values. The function accepts the variable's name as a parameter
      * @param string $css A string containing dynamic CSS (pre-compiled CSS with 
      * variables)
-     * @uses wp_dynamic_css_get_variable_value filter
      * @return string The compiled CSS after converting the variables to their 
      * corresponding values
      */
-    protected function compile_css( $css )
+    protected function compile_css( $css, $callback )
     {   
-        return preg_replace_callback( '#\$([\w]+)#', function( $matches ) {
-            return apply_filters( 'wp_dynamic_css_get_variable_value', $matches[1] );
+        return preg_replace_callback( '#\$([\w]+)#', function( $matches ) use ( $callback ) {
+            return call_user_func_array( $callback, array($matches[1]) );
         }, $css);
     }
 }

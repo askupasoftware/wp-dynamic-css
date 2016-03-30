@@ -6,7 +6,8 @@
 **Contributors:** ykadosh  
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
 **Tested up to:** 4.4.2  
-**Stable tag:** 1.0.1  
+**Stable tag:** 1.0.2  
+**Requires:** PHP 5.3.0 or newer  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html
 

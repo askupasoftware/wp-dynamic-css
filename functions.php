@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   WordPress Dynamic CSS
- * @version   1.0.1
+ * @version   1.0.2
  * @author    Askupa Software <contact@askupasoftware.com>
  * @link      https://github.com/askupasoftware/wp-dynamic-css
  * @copyright 2016 Askupa Software
@@ -16,14 +16,15 @@ if( !function_exists('wp_dynamic_css_enqueue') )
      * document's <head> section, or load it as an external stylesheet if the 
      * second parameter is set to false
      * 
+     * @param string $handle The stylesheet's name/id
      * @param string $path The absolute path to the dynamic CSS file
      * @paran boolean $print Whether to print the compiled CSS to the document 
      * head, or include it as an external CSS file
      */
-    function wp_dynamic_css_enqueue( $path, $print = true )
+    function wp_dynamic_css_enqueue( $handle, $path, $print = true )
     {
         $dcss = DynamicCSSCompiler::get_instance();
-        $dcss->enqueue_style( $path, $print );
+        $dcss->enqueue_style( $handle, $path, $print );
     }
 }
 
@@ -36,12 +37,15 @@ if( !function_exists('wp_dynamic_css_set_callback') )
      * variables when the dynamic CSS file is compiled. The function accepts 1 
      * parameter which is the name of the variable, without the $ sign
      * 
+     * @param string $handle The name of the stylesheet to be associated with this
+     * callback function
      * @param string|array $callback A callback (or "callable" as of PHP 5.4) 
      * can either be a reference to a function name or method within an 
      * class/object.
      */
-    function wp_dynamic_css_set_callback( $callback )
+    function wp_dynamic_css_set_callback( $handle, $callback )
     {
-        add_filter( 'wp_dynamic_css_get_variable_value', $callback );
+        $dcss = DynamicCSSCompiler::get_instance();
+        $dcss->register_callback( $handle, $callback );
     }
 }

@@ -20,6 +20,18 @@
  * Domain Path:     /languages
  */
 
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+
+
+/**
+ * Prevent loading the library more than once
+ */
+if( defined( 'WP_DYNAMIC_CSS' ) ) return;
+define( 'WP_DYNAMIC_CSS', true );
+
+/**
+ * Load required files
+ */
 require_once 'compiler.php';
 require_once 'functions.php';
 
