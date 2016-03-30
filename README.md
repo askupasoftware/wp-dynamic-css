@@ -8,6 +8,7 @@
 **Tested up to:** 4.4.2  
 **Stable tag:** 1.0.2  
 **Requires:** PHP 5.3.0 or newer  
+**WordPress plugin:** [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,15 +39,15 @@ First, add this to your `functions.php` file:
 // 1. Load the library (skip this if you are loading the library as a plugin)
 require_once 'wp-dynamic-css/bootstrap.php';
 
-// 2. Set the callback function (used to convert variables to actual values)
+// 2. Enqueue the stylesheet (using an absolute path, not a URL)
+wp_dynamic_css_enqueue( 'my_dynamic_style', 'path/to/my-style.css' );
+
+// 3. Set the callback function (used to convert variables to actual values)
 function my_dynamic_css_callback( $var_name )
 {
    return get_theme_mod($var_name);
 }
-wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
-
-// 3. Enqueue the stylesheet (using an absolute path, not URL)
-wp_dynamic_css_enqueue( 'path/to/my-style.css' );
+wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
 
 // 4. Nope, only three steps
 ```
@@ -128,13 +129,15 @@ Future releases may support a more compex syntax, so any suggestions are welcome
 
 ## Enqueueing Dynamic Stylesheets
 
-To enqueue a dynamic CSS file, call the function `wp_dynamic_css_enqueue` and pass it the **absolute path** to your CSS file:
+To enqueue a dynamic CSS file, call the function `wp_dynamic_css_enqueue` and pass it a handle and the **absolute path** to your CSS file:
 
 ```php
-wp_dynamic_css_enqueue('path/to/dynamic-style.css');
+wp_dynamic_css_enqueue( 'my_dynamic_style', 'path/to/dynamic-style.css' );
 ```
 
 This will print the contents of `dynamic-style.css` into the document `<head>` section after replacing all the variables to their values using the given callback function set by `wp_dynamic_css_set_callback()`.
+
+The first argument - the stylesheet handle - is used as an id for associating a callback function to it.
 
 If multiple calls to `wp_dynamic_css_enqueue()` are made with different CSS files, then their contents will be appended to the same `<style>` section in the document `<head>`.
 
@@ -143,7 +146,7 @@ If multiple calls to `wp_dynamic_css_enqueue()` are made with different CSS file
 Instead of printing the compiled CSS to the head of the document, you can alternatively load it as an external stylesheet by setting the second parameter to `false`:
 
 ```php
-wp_dynamic_css_enqueue('path/to/dynamic-style.css', false);
+wp_dynamic_css_enqueue( 'my_dynamic_style', 'path/to/dynamic-style.css', false );
 ```
 
 This will reduce the loading time of your document since the call to the compiler will be made asynchronously as an http request. Additionally, styelsheets that are loaded externally can be cached by the browser, as opposed to stylesheets that are printed to the head.
@@ -159,7 +162,7 @@ function my_dynamic_css_callback( $var_name )
 {
    return get_theme_mod($var_name);
 }
-wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
+wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
 ```
 
 However, the `get_theme_mod()` function also takes a second argument, which is the default value to be used when the modification name does not exists (e.g. no changes were made in Customizer since the theme was activated).
@@ -176,7 +179,7 @@ function my_dynamic_css_callback( $var_name )
 {
    return get_theme_mod($var_name, @$theme_mod_defaults[$var_name]);
 }
-wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
+wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
 ```
 
 Your CSS file can look something like this:
@@ -200,5 +203,5 @@ body {
 ## TODO
 
 * ~~Add support for loading the compiled CSS externally instead of printing to the document head~~ (Added in 1.0.1)
-* Add support for multiple value callback functions
-* Add support for caching
+* ~~Add support for multiple value callback functions~~ (Added in 1.0.2)
+* Add support for caching and improve performance
