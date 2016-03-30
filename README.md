@@ -35,7 +35,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
 First, add this to your `functions.php` file:
 
 ```php
-// 1. Load the library
+// 1. Load the library (skip this if you are loading the library as a plugin)
 require_once 'wp-dynamic-css/bootstrap.php';
 
 // 2. Set the callback function (used to convert variables to actual values)
@@ -98,7 +98,9 @@ This will install the package in the directory `wp-content/plugins`. For custom 
 
 ### Via WordPress.org
 
-Coming soon
+Install and activate the plugin hosted on WordPress.org: [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)
+
+When the plugin is activated, all the library files are automatically included so you don't need to manually include them.
 
 ### Manually
 
