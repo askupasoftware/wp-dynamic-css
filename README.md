@@ -30,6 +30,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
 ## Overview
 
 **WordPress Dynamic CSS** is a lightweight library for generating CSS stylesheets from dynamic content (i.e. content that can be modified by the user). The most obvious use case for this library is for creating stylesheets based on Customizer options. Using the special dynamic CSS syntax you can write CSS rules with variables that will be replaced by static values using a custom callback function that you provide.
+**As of version 1.0.2** this library supports multiple callback functions, thus making it safe to use by multiple plugins/themes at the same time.
 
 ### Basic Example
 

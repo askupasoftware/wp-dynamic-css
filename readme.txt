@@ -15,6 +15,8 @@ Dynamic CSS compiler for WordPress themes and plugins
 The most obvious use case for this library is for creating stylesheets based on Customizer options. 
 Using the special dynamic CSS syntax you can write CSS rules with variables that will be replaced by static values using a custom callback function that you provide.
 
+**As of version 1.0.2** this plugin supports multiple callback functions, thus making it safe to use by multiple plugins/themes at the same time.
+
 ### Basic Example
 
 First, add this to your `functions.php` file:
@@ -23,15 +25,17 @@ First, add this to your `functions.php` file:
 // 1. Load the library (skip this if you are loading the library as a plugin)
 require_once 'wp-dynamic-css/bootstrap.php';
 
-// 2. Set the callback function (used to convert variables to actual values)
+// 2. Enqueue the stylesheet (using an absolute path, not a URL)
+wp_dynamic_css_enqueue( 'my_dynamic_style', 'path/to/my-style.css' );
+
+// 3. Set the callback function (used to convert variables to actual values)
 function my_dynamic_css_callback( $var_name )
 {
    return get_theme_mod($var_name);
 }
-wp_dynamic_css_set_callback( 'my_dynamic_css_callback' );
+wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
 
-// 3. Enqueue the stylesheet (using an absolute path, not URL)
-wp_dynamic_css_enqueue( 'path/to/my-style.css' );
+// 4. Nope, only three steps
 </pre>
 
 Then, create a file called `my-style.css` and write this in it:
@@ -62,12 +66,16 @@ You can find detailed documentation on how to use this library on the [GitHub pa
 
 == Installation ==
 
-Please follow the instructions on the plugin's [GitHub page](https://github.com/askupasoftware/wp-dynamic-css) for detailed explanation and examples
+Please follow the instructions on the plugin's [GitHub page](https://github.com/askupasoftware/wp-dynamic-css) for detailed explanation and examples.
 
 == Changelog ==
 
+= 1.0.2 =
+* (NEW) Added support for multiple callback functions
+* (FIX) The library is now safe to use by multiple plugins/themes in the same installation
+
 = 1.0.1 =
-* Added support for loading compiled CSS as an external stylesheet
+* (NEW) Added support for loading compiled CSS as an external stylesheet
 
 = 1.0.0 =
 * Initial release
