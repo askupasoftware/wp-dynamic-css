@@ -226,7 +226,7 @@ This function will either print the compiled version of the stylesheet to the do
 *Set the value retrieval callback function*
 
 ```php 
-wp_dynamic_css_set_callback( $handle, $callback )
+function wp_dynamic_css_set_callback( $handle, $callback )
 ```
 
 Set a callback function that will be used to convert variables to actual values. The registered function will be used when the dynamic CSS file that is associated with the name in `$handle` is compiled. The callback function accepts 1 parameter which is the name of the variable, without the $ sign.
