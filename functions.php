@@ -13,8 +13,8 @@ if( !function_exists('wp_dynamic_css_enqueue') )
      * Enqueue a dynamic stylesheet
      * 
      * This will either print the compiled version of the stylesheet to the 
-     * document's <head> section, or load it as an external stylesheet if the 
-     * second parameter is set to false
+     * document's <head> section, or load it as an external stylesheet if $print 
+     * is set to false
      * 
      * @param string $handle The stylesheet's name/id
      * @param string $path The absolute path to the dynamic CSS file

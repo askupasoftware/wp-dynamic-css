@@ -26,10 +26,13 @@ A library for generating static stylesheets from dynamic content, to be used in 
 * [Enqueueing Dynamic Stylesheets](#enqueueing-dynamic-stylesheets)
     * [Loading the Compiled CSS as an External Stylesheet](#loading-the-compiled-css-as-an-external-stylesheet)
 * [Setting the Value Callback](#setting-the-value-callback)
+* [API Reference](#api-reference)
+    * [wp_dynamic_css_enqueue](#wp_dynamic_css_enqueue)
+    * [wp_dynamic_css_set_callback](#wp_dynamic_css_set_callback)
 
 ## Overview
 
-**WordPress Dynamic CSS** is a lightweight library for generating CSS stylesheets from dynamic content (i.e. content that can be modified by the user). The most obvious use case for this library is for creating stylesheets based on Customizer options. Using the special dynamic CSS syntax you can write CSS rules with variables that will be replaced by static values using a custom callback function that you provide.
+**WordPress Dynamic CSS** is a lightweight library for generating CSS stylesheets from dynamic content (i.e. content that can be modified by the user). The most obvious use case for this library is for creating stylesheets based on Customizer options. Using the special dynamic CSS syntax you can write CSS rules with variables that will be replaced by static values using a custom callback function that you provide.  
 **As of version 1.0.2** this library supports multiple callback functions, thus making it safe to use by multiple plugins/themes at the same time.
 
 ### Basic Example
@@ -53,7 +56,7 @@ wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
 // 4. Nope, only three steps
 ```
 
-Then, create a file called `my-style.css` and write this in it:
+Then, create a file called `my-style.css` and write your (dynamic) CSS in it:
 
 ```css
 body {
@@ -200,6 +203,37 @@ body {
    color: black;
 }
 ```
+
+## API Reference
+
+### wp_dynamic_css_enqueue
+
+*Enqueue a dynamic stylesheet*
+
+```php 
+function wp_dynamic_css_enqueue( $handle, $path, $print = true )
+```
+
+This function will either print the compiled version of the stylesheet to the document's <head> section, or load it as an external stylesheet if `$print` is set to false.
+
+**Parameters**
+* `$handle` (*string*) The stylesheet's name/id
+* `$path` (*string*) The absolute path to the dynamic CSS file
+* `$print` (*boolean*) Whether to print the compiled CSS to the document head, or load it as an external CSS file via an http request
+
+### wp_dynamic_css_set_callback
+
+*Set the value retrieval callback function*
+
+```php 
+function wp_dynamic_css_set_callback( $handle, $callback )
+```
+
+Set a callback function that will be used to convert variables to actual values. The registered function will be used when the dynamic CSS file that is associated with the name in `$handle` is compiled. The callback function accepts 1 parameter which is the name of the variable, without the $ sign.
+
+**Parameters**
+* `$handle` (*string*) The name of the stylesheet to be associated with this callback function.
+* `$callback` (*callable*) A callback (or "callable" as of PHP 5.4) can either be a reference to a function name or method within a class/object.
 
 ## TODO
 
