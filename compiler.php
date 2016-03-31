@@ -80,7 +80,7 @@ class DynamicCSSCompiler
         
         foreach( $styles as $style ) 
         {
-            $css = $this->get_file_contents( $style['path'] );
+            $css = file_get_contents( $style['path'] );
             $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
         }
         
@@ -101,7 +101,7 @@ class DynamicCSSCompiler
         
         foreach( $styles as $style ) 
         {
-            $css = $this->get_file_contents( $style['path'] );
+            $css = file_get_contents( $style['path'] );
             $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
         }
         
@@ -159,19 +159,6 @@ class DynamicCSSCompiler
     protected function filter_external( $style )
     {
         return true !== $style['print'];
-    }
-    
-    /**
-     * Get the contents of a given file
-     * 
-     * @param string $path The absolute path to the file
-     * @return string The file contents
-     */
-    protected function get_file_contents( $path )
-    {
-        ob_start();
-        include $path;
-        return ob_get_clean();
     }
     
     /**
