@@ -56,7 +56,7 @@ wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
 // 4. Nope, only three steps
 ```
 
-Then, create a file called `my-style.css` and write this in it:
+Then, create a file called `my-style.css` and write your (dynamic) CSS in it:
 
 ```css
 body {
