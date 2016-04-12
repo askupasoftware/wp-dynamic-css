@@ -29,6 +29,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
 * [API Reference](#api-reference)
     * [wp_dynamic_css_enqueue](#wp_dynamic_css_enqueue)
     * [wp_dynamic_css_set_callback](#wp_dynamic_css_set_callback)
+* [Changelog](#changelog)
 
 ## Overview
 
@@ -240,3 +241,14 @@ Set a callback function that will be used to convert variables to actual values.
 * ~~Add support for loading the compiled CSS externally instead of printing to the document head~~ (Added in 1.0.1)
 * ~~Add support for multiple value callback functions~~ (Added in 1.0.2)
 * Add support for caching and improve performance
+
+## Changelog
+
+**1.0.2**
+* Added support for multiple value callback functions
+
+**1.0.1**
+* Added support for loading the compiled CSS externally instead of printing to the document head
+
+**1.0.0**
+* Initial release
