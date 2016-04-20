@@ -130,6 +130,16 @@ body {
 
 During run time, this file will be compiled into regular CSS by replacing all the variables to their corresponding values by calling the 'value callback' function and passing the variable name (without the $ sign) to that function.
 
+**Array variables (since 1.0.3)**  
+
+Version 1.0.3 added support for array subscripts, using a syntax similar to that of PHP. For example:
+```css
+body {
+   font-family: $font['font-family'];
+}
+```
+The callback function should accept a second variable that will hold an array of subscript names. A more in-depth explanation can be found in the [Setting the Value Callback](#setting-the-value-callback) section.
+
 Future releases may support a more compex syntax, so any suggestions are welcome. You can make a suggestion by creating an issue or submitting a pull request.
 
 ## Enqueueing Dynamic Stylesheets
@@ -176,8 +186,8 @@ In that case, we can tweak our callback function to return default values as wel
 
 ```php
 $theme_mod_defaults = array(
-   'body_bg_color': '#fff',
-   'body_text_color': 'black'
+   'body_bg_color' => '#fff',
+   'body_text_color' => 'black'
 );
 
 function my_dynamic_css_callback( $var_name )
@@ -202,6 +212,55 @@ Which will be compiled to this (provided that no changes were made by the user i
 body {
    background-color: #fff;
    color: black;
+}
+```
+
+**Array variables**  
+
+It is also possible to access array values using subscripts. An example dynamic CSS file may look like:
+
+```css
+body {
+   background-color: $body_bg_color;
+   color: $body_text_color;
+   font: $font['font-size']px '$font['font-family']';
+}
+```
+
+However, in this case the callback function is passed 2 parameters: one holding the variable name, and a second holding an array of subscript names. The second variable is always going to be an array since there may be more than one subscript (multidimensional arrays). To retrieve to array value, the subscripts array is to be looped through to get each subscript. For example:
+
+```php
+$theme_mod_defaults = array(
+   'body_bg_color' => '#fff',
+   'body_text_color' => 'black'
+   'font' => array(
+      'font-familiy' => 'Arial',
+      'font-size' => 14
+   )
+);
+
+function my_dynamic_css_callback( $var_name, $subscripts = null )
+{
+   $val = get_theme_mod($var_name, @$theme_mod_defaults[$var_name]);
+   if( null !== $subscripts )
+   {
+      foreach( $subscripts as $subscript )
+      {
+          $val = $val[$subscript];
+      }
+   }
+   return $val;
+}
+wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
+```
+
+whic compiles to:
+
+```css
+body {
+   background-color: #fff;
+   color: black;
+   font: 14px 'Arial';
 }
 ```
 
