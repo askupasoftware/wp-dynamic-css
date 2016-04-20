@@ -5,8 +5,8 @@
 
 **Contributors:** ykadosh  
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
-**Tested up to:** 4.4.2  
-**Stable tag:** 1.0.2  
+**Tested up to:** 4.5.0  
+**Stable tag:** 1.0.3  
 **Requires:** PHP 5.3.0 or newer  
 **WordPress plugin:** [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)  
 **License:** GPLv3 or later  
@@ -243,6 +243,9 @@ Set a callback function that will be used to convert variables to actual values.
 * Add support for caching and improve performance
 
 ## Changelog
+
+**1.0.3**
+* Added support for variable subscripts
 
 **1.0.2**
 * Added support for multiple value callback functions
