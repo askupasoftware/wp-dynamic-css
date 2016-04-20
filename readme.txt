@@ -3,7 +3,7 @@ Contributors: Askupa Software
 Tags: dynamic css, css, customizer, get_theme_mod, css variables, css compiler
 Requires at least: 3.0
 Tested up to: 4.4.2
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -69,6 +69,9 @@ You can find detailed documentation on how to use this library on the [GitHub pa
 Please follow the instructions on the plugin's [GitHub page](https://github.com/askupasoftware/wp-dynamic-css) for detailed explanation and examples.
 
 == Changelog ==
+
+= 1.0.3 =
+* (NEW) Added support for variable subscripts
 
 = 1.0.2 =
 * (NEW) Added support for multiple callback functions
