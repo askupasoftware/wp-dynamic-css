@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   WordPress Dynamic CSS
- * @version   1.0.2
+ * @version   1.0.3
  * @author    Askupa Software <contact@askupasoftware.com>
  * @link      https://github.com/askupasoftware/wp-dynamic-css
  * @copyright 2016 Askupa Software
@@ -174,8 +174,13 @@ class DynamicCSSCompiler
      */
     protected function compile_css( $css, $callback )
     {   
-        return preg_replace_callback( '#\$([\w]+)#', function( $matches ) use ( $callback ) {
-            return call_user_func_array( $callback, array($matches[1]) );
+        return preg_replace_callback( "#\\$([\\w-]+)((?:\\['?[\\w-]+'?\\])*)#", function( $matches ) use ( $callback ) {
+            // If this variable is an array, get the subscripts
+            if( '' !== $matches[2] )
+            {
+                preg_match_all('/[\w-]+/i', $matches[2], $subscripts);
+            }
+            return call_user_func_array( $callback, array($matches[1],@$subscripts[0]) );
         }, $css);
     }
 }
