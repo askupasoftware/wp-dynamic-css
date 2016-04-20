@@ -13,7 +13,7 @@
  * Plugin Name:     WordPress Dynamic CSS
  * Plugin URI:      https://github.com/askupasoftware/wp-dynamic-css
  * Description:     Dynamic CSS compiler for WordPress
- * Version:         1.0.2
+ * Version:         1.0.3
  * Author:          Askupa Software
  * Author URI:      http://www.askupasoftware.com
  * Text Domain:     wp-dynamic-css
