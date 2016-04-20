@@ -254,7 +254,7 @@ function my_dynamic_css_callback( $var_name, $subscripts = null )
 wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
 ```
 
-whic compiles to:
+which compiles to:
 
 ```css
 body {
