@@ -72,17 +72,12 @@ class DynamicCSSCompiler
      */
     public function compile_printed_styles()
     {
-        $compiled_css = '';
         $styles = array_filter($this->stylesheets, array( $this, 'filter_print' ) );
         
         // Bail if there are no styles to be printed
         if( count( $styles ) === 0 ) return;
         
-        foreach( $styles as $style ) 
-        {
-            $css = file_get_contents( $style['path'] );
-            $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
-        }
+        $compiled_css = $this->compile_styles( $styles );
         
         echo "<style id=\"wp-dynamic-css\">\n";
         include 'style.phtml';
@@ -96,14 +91,9 @@ class DynamicCSSCompiler
     public function compile_external_styles()
     {
         header( "Content-type: text/css; charset: UTF-8" );
-        $compiled_css = '';
-        $styles = array_filter($this->stylesheets, array( $this, 'filter_external' ) );
+        header( "Cache-Control: no-cache, must-revalidate" ); //set headers to NOT cache a page so that changes to options are reflected immediately
         
-        foreach( $styles as $style ) 
-        {
-            $css = file_get_contents( $style['path'] );
-            $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
-        }
+        $compiled_css = $this->compile_styles( array_filter($this->stylesheets, array( $this, 'filter_external' ) ) );
         
         include 'style.phtml';
         wp_die();
@@ -137,6 +127,24 @@ class DynamicCSSCompiler
         $this->callbacks[$handle] = $callback;
     }
 
+    /**
+     * Compile multiple dynamic stylesheets
+     * 
+     * @param array $styles List of styles with the same structure as they are 
+     * stored in $this->stylesheets
+     * @return string Compiled CSS
+     */
+    protected function compile_styles( $styles )
+    {
+        $compiled_css = '';
+        foreach( $styles as $style ) 
+        {
+            $css = file_get_contents( $style['path'] );
+            $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
+        }
+        return $compiled_css;
+    }
+    
     /**
      * This filter is used to return only the styles that are set to be printed
      * in the document head
