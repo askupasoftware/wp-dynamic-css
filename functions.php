@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   WordPress Dynamic CSS
- * @version   1.0.3
+ * @version   1.0.4
  * @author    Askupa Software <contact@askupasoftware.com>
  * @link      https://github.com/askupasoftware/wp-dynamic-css
  * @copyright 2016 Askupa Software
@@ -20,11 +20,12 @@ if( !function_exists('wp_dynamic_css_enqueue') )
      * @param string $path The absolute path to the dynamic CSS file
      * @paran boolean $print Whether to print the compiled CSS to the document 
      * head, or include it as an external CSS file
+     * @param boolean $minify Whether to minify the CSS output
      */
-    function wp_dynamic_css_enqueue( $handle, $path, $print = true )
+    function wp_dynamic_css_enqueue( $handle, $path, $print = true, $minify = false )
     {
         $dcss = DynamicCSSCompiler::get_instance();
-        $dcss->enqueue_style( $handle, $path, $print );
+        $dcss->enqueue_style( $handle, $path, $print, $minify );
     }
 }
 

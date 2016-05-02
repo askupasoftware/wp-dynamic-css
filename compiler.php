@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   WordPress Dynamic CSS
- * @version   1.0.3
+ * @version   1.0.4
  * @author    Askupa Software <contact@askupasoftware.com>
  * @link      https://github.com/askupasoftware/wp-dynamic-css
  * @copyright 2016 Askupa Software
@@ -91,7 +91,7 @@ class DynamicCSSCompiler
     public function compile_external_styles()
     {
         header( "Content-type: text/css; charset: UTF-8" );
-        header( "Cache-Control: no-cache, must-revalidate" ); //set headers to NOT cache a page so that changes to options are reflected immediately
+        header( "Cache-Control: no-cache, must-revalidate" ); //set headers to NOT cache so that changes to options are reflected immediately
         
         $compiled_css = $this->compile_styles( array_filter($this->stylesheets, array( $this, 'filter_external' ) ) );
         
@@ -104,15 +104,17 @@ class DynamicCSSCompiler
      * 
      * @param string $handle The stylesheet's name/id
      * @param string $path The absolute path to the dynamic style
-     * @param boolean $print Whether to print the compiled CSS to the document 
+     * @param boolean $print Whether to print the compiled CSS to the document
      * head, or include it as an external CSS file
+     * @param boolean $minify Whether to minify the CSS output
      */
-    public function enqueue_style( $handle, $path, $print )
+    public function enqueue_style( $handle, $path, $print, $minify )
     {
         $this->stylesheets[] = array(
             'handle'=> $handle,
             'path'  => $path,
-            'print' => $print
+            'print' => $print,
+            'minify'=> $minify
         );
     }
     
@@ -140,11 +142,24 @@ class DynamicCSSCompiler
         foreach( $styles as $style ) 
         {
             $css = file_get_contents( $style['path'] );
+            if( $style['minify'] ) $css = $this->minify_css ( $css );
             $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
         }
         return $compiled_css;
     }
     
+    /**
+     * Minify a given CSS string by removing comments, whitespaces and newlines
+     * 
+     * @see http://stackoverflow.com/a/6630103/1096470
+     * @param string $css CSS style to minify
+     * @return string Minified CSS
+     */
+    protected function minify_css( $css )
+    {
+        return preg_replace( '@({)\s+|(\;)\s+|/\*.+?\*\/|\R@is', '$1$2 ', $css );
+    }
+
     /**
      * This filter is used to return only the styles that are set to be printed
      * in the document head

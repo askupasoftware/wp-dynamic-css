@@ -6,7 +6,7 @@
 **Contributors:** ykadosh  
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
 **Tested up to:** 4.5.0  
-**Stable tag:** 1.0.3  
+**Stable tag:** 1.0.4  
 **Requires:** PHP 5.3.0 or newer  
 **WordPress plugin:** [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)  
 **License:** GPLv3 or later  
@@ -271,7 +271,7 @@ body {
 *Enqueue a dynamic stylesheet*
 
 ```php 
-function wp_dynamic_css_enqueue( $handle, $path, $print = true )
+function wp_dynamic_css_enqueue( $handle, $path, $print = true, $minify = false )
 ```
 
 This function will either print the compiled version of the stylesheet to the document's <head> section, or load it as an external stylesheet if `$print` is set to false.
@@ -280,6 +280,7 @@ This function will either print the compiled version of the stylesheet to the do
 * `$handle` (*string*) The stylesheet's name/id
 * `$path` (*string*) The absolute path to the dynamic CSS file
 * `$print` (*boolean*) Whether to print the compiled CSS to the document head, or load it as an external CSS file via an http request
+* `$minify` (*boolean*) Whether to minify the CSS output
 
 ### wp_dynamic_css_set_callback
 
@@ -299,10 +300,14 @@ Set a callback function that will be used to convert variables to actual values.
 
 * ~~Add support for loading the compiled CSS externally instead of printing to the document head~~ (Added in 1.0.1)
 * ~~Add support for multiple value callback functions~~ (Added in 1.0.2)
+* ~~Add option for minification~~ (Added in 1.0.4)
 * Add support for caching and improve performance
-* Add option for minification
 
 ## Changelog
+
+**1.0.4**
+* Set cache-control to no-cache so that changes to options are reflected immediately
+* Added support for CSS minification
 
 **1.0.3**
 * Added support for variable subscripts
