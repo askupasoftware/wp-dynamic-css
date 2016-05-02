@@ -2,7 +2,7 @@
 Contributors: Askupa Software
 Tags: dynamic css, css, customizer, get_theme_mod, css variables, css compiler
 Requires at least: 3.0
-Tested up to: 4.4.2
+Tested up to: 4.5.1
 Stable tag: 1.0.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html

@@ -5,7 +5,7 @@
 
 **Contributors:** ykadosh  
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
-**Tested up to:** 4.5.0  
+**Tested up to:** 4.5.1  
 **Stable tag:** 1.0.4  
 **Requires:** PHP 5.3.0 or newer  
 **WordPress plugin:** [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)  
