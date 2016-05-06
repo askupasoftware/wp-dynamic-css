@@ -9,7 +9,9 @@ A library for generating static stylesheets from dynamic content, to be used in 
 **Requires:** PHP 5.3.0 or newer  
 **WordPress plugin:** [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)  
 **License:** GPLv3 or later  
-**License URI:** http://www.gnu.org/licenses/gpl-3.0.html
+**License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
+
+--
 
 **WordPress Dynamic CSS** allows you to convert this:
 ```css
