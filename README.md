@@ -311,10 +311,10 @@ Set a callback function that will be used to convert variables to actual values.
 
 ## TODO
 
-* ~~Add support for loading the compiled CSS externally instead of printing to the document head~~ (Added in 1.0.1)
-* ~~Add support for multiple value callback functions~~ (Added in 1.0.2)
-* ~~Add option for minification~~ (Added in 1.0.4)
-* Add support for caching and improve performance
+- [x] Add support for loading the compiled CSS externally instead of printing to the document head (Added in 1.0.1)
+- [x] Add support for multiple value callback functions (Added in 1.0.2)
+- [x] Add option for minification (Added in 1.0.4)
+- [ ] Add support for caching and improve performance
 
 ## Changelog
 
