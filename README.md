@@ -1,7 +1,6 @@
-# WordPress Dynamic CSS
-[![License](https://scrutinizer-ci.com/g/askupasoftware/wp-dynamic-css/badges/build.png?b=master)](https://scrutinizer-ci.com/g/askupasoftware/wp-dynamic-css/build-status/master)
-[![License](https://scrutinizer-ci.com/g/askupasoftware/wp-dynamic-css/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/askupasoftware/wp-dynamic-css/build-status/master)
-[![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg)](https://raw.githubusercontent.com/askupasoftware/wp-dynamic-css/master/LICENSE)
+# WordPress Dynamic CSS [![License](https://scrutinizer-ci.com/g/askupasoftware/wp-dynamic-css/badges/build.png?b=master)](https://scrutinizer-ci.com/g/askupasoftware/wp-dynamic-css/build-status/master) [![License](https://scrutinizer-ci.com/g/askupasoftware/wp-dynamic-css/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/askupasoftware/wp-dynamic-css/build-status/master) [![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg)](https://raw.githubusercontent.com/askupasoftware/wp-dynamic-css/master/LICENSE)
+A library for generating static stylesheets from dynamic content, to be used in WordPress themes and plugins.
+
 
 **Contributors:** ykadosh  
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
@@ -10,9 +9,23 @@
 **Requires:** PHP 5.3.0 or newer  
 **WordPress plugin:** [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)  
 **License:** GPLv3 or later  
-**License URI:** http://www.gnu.org/licenses/gpl-3.0.html
+**License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
-A library for generating static stylesheets from dynamic content, to be used in WordPress themes and plugins.
+--
+
+**WordPress Dynamic CSS** allows you to convert this:
+```css
+body {
+   background-color: $body_bg_color;
+}
+```
+into this:
+```css
+body {
+   background-color: #fff;
+}
+```
+Using dynamic user data.
 
 ## Contents
 
@@ -298,10 +311,10 @@ Set a callback function that will be used to convert variables to actual values.
 
 ## TODO
 
-* ~~Add support for loading the compiled CSS externally instead of printing to the document head~~ (Added in 1.0.1)
-* ~~Add support for multiple value callback functions~~ (Added in 1.0.2)
-* ~~Add option for minification~~ (Added in 1.0.4)
-* Add support for caching and improve performance
+- [x] Add support for loading the compiled CSS externally instead of printing to the document head (Added in 1.0.1)
+- [x] Add support for multiple value callback functions (Added in 1.0.2)
+- [x] Add option for minification (Added in 1.0.4)
+- [ ] Add support for caching and improve performance
 
 ## Changelog
 
