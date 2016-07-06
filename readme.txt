@@ -1,5 +1,5 @@
 === WordPress Dynamic CSS ===
-Contributors: Askupa Software
+Contributors: Askupa Software, ykadosh
 Tags: dynamic css, css, customizer, get_theme_mod, css variables, css compiler
 Requires at least: 3.0
 Tested up to: 4.5.1
