@@ -38,9 +38,11 @@ require_once 'functions.php';
 /**
  * The following actions are used for printing or loading the compiled 
  * stylesheets externally.
+ * Priority is set to high (100) to allow the dynamic CSS to override static
+ * styles.
  */
 $dcss = DynamicCSSCompiler::get_instance();
-add_action( 'wp_print_styles', array( $dcss, 'compile_printed_styles' ) );
-add_action( 'wp_enqueue_scripts', array( $dcss, 'wp_enqueue_style' ) );
+add_action( 'wp_print_styles', array( $dcss, 'compile_printed_styles' ), 100 );
+add_action( 'wp_enqueue_scripts', array( $dcss, 'wp_enqueue_style' ), 100 );
 add_action( 'wp_ajax_wp_dynamic_css', array( $dcss, 'compile_external_styles' ) );
 add_action( 'wp_ajax_nopriv_wp_dynamic_css', array( $dcss, 'compile_external_styles' ) );
