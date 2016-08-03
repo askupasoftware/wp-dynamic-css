@@ -308,21 +308,3 @@ Set a callback function that will be used to convert variables to actual values.
 **Parameters**
 * `$handle` (*string*) The name of the stylesheet to be associated with this callback function.
 * `$callback` (*callable*) A callback (or "callable" as of PHP 5.4) can either be a reference to a function name or method within a class/object.
-
-## Changelog
-
-**1.0.4**
-* Set cache-control to no-cache so that changes to options are reflected immediately
-* Added support for CSS minification
-
-**1.0.3**
-* Added support for variable subscripts
-
-**1.0.2**
-* Added support for multiple value callback functions
-
-**1.0.1**
-* Added support for loading the compiled CSS externally instead of printing to the document head
-
-**1.0.0**
-* Initial release
