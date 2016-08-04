@@ -53,47 +53,61 @@ class DynamicCSSCompiler
     }
     
     /**
-     * Enqueue the PHP script used for compiling dynamic stylesheets that are 
-     * loaded externally
+     * Enqueue the stylesheets that are registered to be loaded externally
      */
-    public function wp_enqueue_style()
+    public function enqueue_styles()
     {
-        // Only enqueue if there is at least one dynamic stylesheet that is
-        // set to be loaded externally
-        if( 0 < count( array_filter($this->stylesheets, array( $this, 'filter_external' ) ) ) )
+        foreach( $this->stylesheets as $stylesheet )
         {
-            wp_enqueue_style( 'wp-dynamic-css', admin_url( 'admin-ajax.php?action=wp_dynamic_css' ) );
+            if( !$stylesheet['print'] && $this->callback_exists( $stylesheet['handle'] ) )
+            {
+                wp_enqueue_style( 
+                    'wp-dynamic-css-'.$stylesheet['handle'],
+                    esc_url_raw( add_query_arg(array(
+                        'action' => 'wp_dynamic_css',
+                        'handle' => $stylesheet['handle']
+                    ), admin_url( 'admin-ajax.php')))
+                );
+            }
         }
     }
     
     /**
-     * Parse all styles in $this->stylesheets and print them if the flag 'print'
-     * is set to true. Used for printing styles to the document head.
+     * Print the stylesheets that are registered to be printed to the document head
      */
-    public function compile_printed_styles()
+    public function print_styles()
     {        
-        // Compile only if there are styles to be printed
-        if( 0 < count( array_filter($this->stylesheets, array( $this, 'filter_print' ) ) ) )
+        foreach( $this->stylesheets as $stylesheet )
         {
-            $compiled_css = $this->get_compiled_styles( true );
+            if( $stylesheet['print'] && $this->callback_exists( $stylesheet['handle'] ) )
+            {
+                $compiled_css = $this->get_compiled_style( $stylesheet );
         
-            echo "<style id=\"wp-dynamic-css\">\n";
-            include 'style.phtml';
-            echo "</style>";
+                echo "<style id=\"wp-dynamic-css-".$stylesheet['handle']."\">\n";
+                include 'style.phtml';
+                echo "\n</style>\n";
+            }
         }
     }
     
     /**
-     * Parse all styles in $this->stylesheets and print them if the flag 'print'
-     * is not set to true. Used for loading styles externally via an http request.
+     * This is the AJAX callback used for loading styles externally via an http 
+     * request.
      */
-    public function compile_external_styles()
+    public function ajax_callback()
     {
         header( "Content-type: text/css; charset: UTF-8" );
+        $handle = filter_input( INPUT_GET, 'handle' );
         
-        $compiled_css = $this->get_compiled_styles( false );
+        foreach( $this->stylesheets as $stylesheet )
+        {
+            if( $handle === $stylesheet['handle'] )
+            {
+                $compiled_css = $this->get_compiled_style( $stylesheet );
+                include 'style.phtml';
+            }
+        }
         
-        include 'style.phtml';
         wp_die();
     }
     
@@ -128,31 +142,6 @@ class DynamicCSSCompiler
     public function register_callback( $handle, $callback )
     {
         $this->callbacks[$handle] = $callback;
-    }
-
-    /**
-     * Compile multiple dynamic stylesheets
-     * 
-     * @param boolean $printed
-     * @return string Compiled CSS
-     */
-    protected function get_compiled_styles( $printed )
-    {
-        $compiled_css = '';
-        foreach( $this->stylesheets as $style ) 
-        {
-            if( !array_key_exists( $style['handle'], $this->callbacks ) )
-            {
-                trigger_error( 'There is no callback function associated with the handle "'.$style['handle'].'". Use <b>wp_dynamic_css_set_callback()</b> to register a callback function for this handle.' );
-                continue;
-            }
-            
-            if( $style['print'] === $printed )
-            {
-                $compiled_css .= $this->get_compiled_style( $style )."\n";
-            }
-        }
-        return $compiled_css;
     }
     
     /**
@@ -194,29 +183,24 @@ class DynamicCSSCompiler
     {
         return preg_replace( '@({)\s+|(\;)\s+|/\*.+?\*\/|\R@is', '$1$2 ', $css );
     }
-
-    /**
-     * This filter is used to return only the styles that are set to be printed
-     * in the document head
-     * 
-     * @param array $style
-     * @return boolean
-     */
-    protected function filter_print( $style )
-    {
-        return true === $style['print'];
-    }
     
     /**
-     * This filter is used to return only the styles that are set to be loaded
-     * externally
+     * Check if a callback function has been register for the given handle.
      * 
-     * @param array $style
+     * @param string $handle 
      * @return boolean
      */
-    protected function filter_external( $style )
+    protected function callback_exists( $handle )
     {
-        return true !== $style['print'];
+        if( array_key_exists( $handle, $this->callbacks ) )
+        {
+            return true;
+        }
+        trigger_error( 
+            "There is no callback function associated with the handle '$handle'. ".
+            "Use <b>wp_dynamic_css_set_callback()</b> to register a callback function for this handle." 
+        );
+        return false;
     }
     
     /**
