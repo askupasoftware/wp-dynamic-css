@@ -141,6 +141,12 @@ class DynamicCSSCompiler
         $compiled_css = '';
         foreach( $this->stylesheets as $style ) 
         {
+            if( !array_key_exists( $style['handle'], $this->callbacks ) )
+            {
+                trigger_error( 'There is no callback function associated with the handle "'.$style['handle'].'". Use <b>wp_dynamic_css_set_callback()</b> to register a callback function for this handle.' );
+                continue;
+            }
+            
             if( $style['print'] === $printed )
             {
                 $compiled_css .= $this->get_compiled_style( $style )."\n";
