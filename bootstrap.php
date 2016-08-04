@@ -33,6 +33,7 @@ define( 'WP_DYNAMIC_CSS', true );
  * Load required files
  */
 require_once 'compiler.php';
+require_once 'cache.php';
 require_once 'functions.php';
 
 /**

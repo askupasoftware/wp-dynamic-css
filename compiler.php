@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   WordPress Dynamic CSS
- * @version   1.0.4
+ * @version   1.0.5
  * @author    Askupa Software <contact@askupasoftware.com>
  * @link      https://github.com/askupasoftware/wp-dynamic-css
  * @copyright 2016 Askupa Software
@@ -71,17 +71,16 @@ class DynamicCSSCompiler
      * is set to true. Used for printing styles to the document head.
      */
     public function compile_printed_styles()
-    {
-        $styles = array_filter($this->stylesheets, array( $this, 'filter_print' ) );
+    {        
+        // Compile only if there are styles to be printed
+        if( 0 < count( array_filter($this->stylesheets, array( $this, 'filter_print' ) ) ) )
+        {
+            $compiled_css = $this->get_compiled_styles( true );
         
-        // Bail if there are no styles to be printed
-        if( count( $styles ) === 0 ) return;
-        
-        $compiled_css = $this->compile_styles( $styles );
-        
-        echo "<style id=\"wp-dynamic-css\">\n";
-        include 'style.phtml';
-        echo "</style>";
+            echo "<style id=\"wp-dynamic-css\">\n";
+            include 'style.phtml';
+            echo "</style>";
+        }
     }
     
     /**
@@ -91,9 +90,8 @@ class DynamicCSSCompiler
     public function compile_external_styles()
     {
         header( "Content-type: text/css; charset: UTF-8" );
-        header( "Cache-Control: no-cache, must-revalidate" ); //set headers to NOT cache so that changes to options are reflected immediately
         
-        $compiled_css = $this->compile_styles( array_filter($this->stylesheets, array( $this, 'filter_external' ) ) );
+        $compiled_css = $this->get_compiled_styles( false );
         
         include 'style.phtml';
         wp_die();
@@ -107,14 +105,17 @@ class DynamicCSSCompiler
      * @param boolean $print Whether to print the compiled CSS to the document
      * head, or include it as an external CSS file
      * @param boolean $minify Whether to minify the CSS output
+     * @param boolean $cache Whether to store the compiled version of this 
+     * stylesheet in cache to avoid compilation on every page load.
      */
-    public function enqueue_style( $handle, $path, $print, $minify )
+    public function enqueue_style( $handle, $path, $print, $minify, $cache )
     {
         $this->stylesheets[] = array(
             'handle'=> $handle,
             'path'  => $path,
             'print' => $print,
-            'minify'=> $minify
+            'minify'=> $minify,
+            'cache' => $cache
         );
     }
     
@@ -132,19 +133,47 @@ class DynamicCSSCompiler
     /**
      * Compile multiple dynamic stylesheets
      * 
-     * @param array $styles List of styles with the same structure as they are 
-     * stored in $this->stylesheets
+     * @param boolean $printed
      * @return string Compiled CSS
      */
-    protected function compile_styles( $styles )
+    protected function get_compiled_styles( $printed )
     {
         $compiled_css = '';
-        foreach( $styles as $style ) 
+        foreach( $this->stylesheets as $style ) 
         {
-            $css = file_get_contents( $style['path'] );
-            if( $style['minify'] ) $css = $this->minify_css ( $css );
-            $compiled_css .= $this->compile_css( $css, $this->callbacks[$style['handle']] )."\n";
+            if( $style['print'] === $printed )
+            {
+                $compiled_css .= $this->get_compiled_style( $style )."\n";
+            }
         }
+        return $compiled_css;
+    }
+    
+    /**
+     * Get the compiled CSS for the given style. Skips compilation if the compiled
+     * version can be found in cache.
+     * 
+     * @param array $style List of styles with the same structure as they are 
+     * stored in $this->stylesheets
+     * @return type
+     */
+    protected function get_compiled_style( $style )
+    {
+        $cache = DynamicCSSCache::get_instance();
+        
+        if( $style['cache'] )
+        {
+            $cached_css = $cache->get( $style['handle'] );
+            if( false !== $cached_css )
+            {
+                return $cached_css;
+            }
+        }
+
+        $css = file_get_contents( $style['path'] );
+        if( $style['minify'] ) $css = $this->minify_css( $css );
+        $compiled_css = $this->compile_css( $css, $this->callbacks[$style['handle']] );
+        $cache->update( $style['handle'], $compiled_css );
         return $compiled_css;
     }
     
@@ -196,7 +225,7 @@ class DynamicCSSCompiler
      * corresponding values
      */
     protected function compile_css( $css, $callback )
-    {   
+    {
         return preg_replace_callback( "#\\$([\\w-]+)((?:\\['?[\\w-]+'?\\])*)#", function( $matches ) use ( $callback ) {
             // If this variable is an array, get the subscripts
             if( '' !== $matches[2] )

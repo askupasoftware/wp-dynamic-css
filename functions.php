@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   WordPress Dynamic CSS
- * @version   1.0.4
+ * @version   1.0.5
  * @author    Askupa Software <contact@askupasoftware.com>
  * @link      https://github.com/askupasoftware/wp-dynamic-css
  * @copyright 2016 Askupa Software
@@ -21,11 +21,13 @@ if( !function_exists('wp_dynamic_css_enqueue') )
      * @paran boolean $print Whether to print the compiled CSS to the document 
      * head, or include it as an external CSS file
      * @param boolean $minify Whether to minify the CSS output
+     * @param boolean $cache Whether to store the compiled version of this 
+     * stylesheet in cache to avoid compilation on every page load.
      */
-    function wp_dynamic_css_enqueue( $handle, $path, $print = true, $minify = false )
+    function wp_dynamic_css_enqueue( $handle, $path, $print = true, $minify = false, $cache = false )
     {
         $dcss = DynamicCSSCompiler::get_instance();
-        $dcss->enqueue_style( $handle, $path, $print, $minify );
+        $dcss->enqueue_style( $handle, $path, $print, $minify, $cache );
     }
 }
 
@@ -48,5 +50,24 @@ if( !function_exists('wp_dynamic_css_set_callback') )
     {
         $dcss = DynamicCSSCompiler::get_instance();
         $dcss->register_callback( $handle, $callback );
+    }
+}
+
+if( !function_exists('wp_dynamic_css_clear_cache') )
+{
+    /**
+     * Clear the cached compiled CSS for the given handle.
+     * 
+     * Initially, registered dynamic stylesheets are compiled and stored in cache.
+     * Subsequesnt requests are served statically from cache until 
+     * wp_dynamic_css_clear_cache() is called and clears it, forcing the compiler
+     * to recompile the CSS.
+     * 
+     * @param string $handle The name of the stylesheet to be cleared from cache
+     */
+    function wp_dynamic_css_clear_cache( $handle )
+    {
+        $cache = DynamicCSSCache::get_instance();
+        $cache->clear( $handle );
     }
 }
