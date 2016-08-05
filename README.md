@@ -4,8 +4,8 @@ A library for generating static stylesheets from dynamic content, to be used in 
 
 **Contributors:** ykadosh  
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
-**Tested up to:** 4.5.1  
-**Stable tag:** 1.0.4  
+**Tested up to:** 4.5.3  
+**Stable tag:** 1.0.5  
 **Requires:** PHP 5.3.0 or newer  
 **WordPress plugin:** [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)  
 **License:** GPLv3 or later  
@@ -155,6 +155,34 @@ The callback function should accept a second variable that will hold an array of
 
 Future releases may support a more compex syntax, so any suggestions are welcome. You can make a suggestion by creating an issue or submitting a pull request.
 
+**Piped filters (since 1.0.5)** 
+
+Version 1.0.5 added support for piped filters. Filters can be registered using the function `wp_dynamic_css_register_filter( $handle, $filter_name, $callback )` where `$filter_name` corresponds to the name fo the filter to be used in the stylesheet. For example, if a filter named `myFilter` was registered, it can be applied using the following syntax:
+
+```css
+body {
+   font-family: $myVar|myFilter;
+}
+```
+
+Filters can also be stacked together:
+
+```css
+body {
+   font-family: $myVar|myFilter1|myFilter2;
+}
+```
+
+And can even take additional parameters:
+
+```css
+body {
+   font-family: $myVar|myFilter1('1',2,3.4);
+}
+```
+
+See [Registering Filters](#registering-filters) to learn how to register filter callback functions.
+
 ## Enqueueing Dynamic Stylesheets
 
 To enqueue a dynamic CSS file, call the function `wp_dynamic_css_enqueue` and pass it a handle and the **absolute path** to your CSS file:
@@ -277,6 +305,52 @@ body {
 }
 ```
 
+## Registering Filters
+
+Filters are functions the alter the value of the variables. Filters can be registered using the function `wp_dynamic_css_register_filter( $handle, $filter_name, $callback )`. A registered filter can only be used within the stylesheet whose handle is given. A filter callback function takes the value of the variable as a parameter and should return the filtered value. For example: 
+
+```php
+function my_filter_callback( $value ) 
+{
+   return trim( $value );
+}
+wp_dynamic_css_register_filter( 'my_dynamic_style', 'myFilter', 'my_filter_callback' );
+```
+
+The filter can then be applied using the `|` operator. For example:
+
+```css
+body {
+   font-family: $myVar|myFilter;
+}
+```
+
+Filters can also take additional arguments. For example: 
+
+```php
+function my_filter_callback( $value, $arg1, $arg2 ) 
+{
+   return $value.$arg1.$arg2;
+}
+wp_dynamic_css_register_filter( 'my_dynamic_style', 'myFilter', 'my_filter_callback' );
+```
+
+To pass addidional arguments, use braces `()` and separate each argument with a comma (no spaces are allowd). For example:
+
+```css
+body {
+   font-family: $myVar|myFilter(',arial',',sans-serif');
+}
+```
+
+Accepted argument types are strings, integers, floats and boolean values. Strings must have single quotes around them. For exmaple:
+
+```css
+body {
+   font-family: $myVar|myFilter(1,2,3,'4',5.6,true,false);
+}
+```
+
 ## API Reference
 
 ### wp_dynamic_css_enqueue
@@ -284,16 +358,17 @@ body {
 *Enqueue a dynamic stylesheet*
 
 ```php 
-function wp_dynamic_css_enqueue( $handle, $path, $print = true, $minify = false )
+function wp_dynamic_css_enqueue( $handle, $path, $print = true, $minify = false, $cache = false )
 ```
 
-This function will either print the compiled version of the stylesheet to the document's <head> section, or load it as an external stylesheet if `$print` is set to false.
+This function will either print the compiled version of the stylesheet to the document's <head> section, or load it as an external stylesheet if `$print` is set to false. If `$cache` is set to true, a compiled version of the stylesheet will be stored in the database as soon as it is first compiled. The compiled version will be served thereafter until `wp_dynamic_css_clear_cache()` is called.
 
 **Parameters**
 * `$handle` (*string*) The stylesheet's name/id
 * `$path` (*string*) The absolute path to the dynamic CSS file
 * `$print` (*boolean*) Whether to print the compiled CSS to the document head, or load it as an external CSS file via an http request
 * `$minify` (*boolean*) Whether to minify the CSS output
+* `$cache` (*boolean*) Whether to store the compiled version of this stylesheet in cache to avoid compilation on every page load.
 
 ### wp_dynamic_css_set_callback
 
@@ -303,8 +378,36 @@ This function will either print the compiled version of the stylesheet to the do
 function wp_dynamic_css_set_callback( $handle, $callback )
 ```
 
-Set a callback function that will be used to convert variables to actual values. The registered function will be used when the dynamic CSS file that is associated with the name in `$handle` is compiled. The callback function accepts 1 parameter which is the name of the variable, without the $ sign.
+Set a callback function that will be used to convert variables to actual values. The registered function will be used when the dynamic CSS file that is associated with the name in `$handle` is compiled. The callback function is passed the name of the variable as its first parameter (without the `$`), and the variable subscripts as its second parameter (if applicable). The callback function should return the variable's actual value.
 
 **Parameters**
 * `$handle` (*string*) The name of the stylesheet to be associated with this callback function.
-* `$callback` (*callable*) A callback (or "callable" as of PHP 5.4) can either be a reference to a function name or method within a class/object.
+* `$callback` (*callable*) The value retrieval callback function.
+
+### wp_dynamic_css_clear_cache
+
+*Clear the cached compiled CSS for the given handle.*
+
+```php 
+function wp_dynamic_css_clear_cache( $handle )
+```
+
+Registered dynamic stylesheets that have the `$cache` flag set to true are compiled only once and then stored in cache. Subsequesnt requests are served statically from cache until `wp_dynamic_css_clear_cache()` is called and clears it, forcing the compiler to recompile the CSS.
+
+**Parameters**
+* `$handle` (*string*) The name of the stylesheet to be cleared from cache.
+
+### wp_dynamic_css_register_filter
+
+*Register a filter function for a given stylesheet handle.*
+
+```php 
+function wp_dynamic_css_register_filter( $handle, $filter_name, $callback )
+```
+
+A registered filter can be used to alter the value of a variable by using the `|` operator in the stylesheet. The callback function is passed the variable's value as its first argument, and any additional arguments thereafter.
+
+**Parameters**
+* `$handle` (*string*) The handle of the stylesheet in which this filter is to be used.
+* `$filter_name` (*string*) The name of the filter to be used in the dynamic CSS file.
+* `$callback` (*callable*) The actual filter function. Accepts the variable's value as the first argument. Should return the filtered value.
