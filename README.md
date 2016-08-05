@@ -39,10 +39,12 @@ Using dynamic user data.
 * [Enqueueing Dynamic Stylesheets](#enqueueing-dynamic-stylesheets)
     * [Loading the Compiled CSS as an External Stylesheet](#loading-the-compiled-css-as-an-external-stylesheet)
 * [Setting the Value Callback](#setting-the-value-callback)
+* [Registering Filters](#registering-filters)
 * [API Reference](#api-reference)
     * [wp_dynamic_css_enqueue](#wp_dynamic_css_enqueue)
     * [wp_dynamic_css_set_callback](#wp_dynamic_css_set_callback)
-* [Changelog](#changelog)
+    * [wp_dynamic_css_clear_cache](#wp_dynamic_css_clear_cache)
+    * [wp_dynamic_css_register_filter](#wp_dynamic_css_register_filter)
 
 ## Overview
 
