@@ -13,7 +13,7 @@
 class DynamicCSSCache
 {
     /**
-     * @var Singleton The reference to *Singleton* instance of this class
+     * @var DynamicCSSCache The reference to *Singleton* instance of this class
      */
     private static $instance;
     
@@ -25,7 +25,7 @@ class DynamicCSSCache
     /**
      * Returns the *Singleton* instance of this class.
      *
-     * @return Singleton The *Singleton* instance.
+     * @return DynamicCSSCache The *Singleton* instance.
      */
     public static function get_instance()
     {

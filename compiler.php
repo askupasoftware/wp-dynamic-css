@@ -24,7 +24,7 @@
 class DynamicCSSCompiler
 {
     /**
-     * @var Singleton The reference to *Singleton* instance of this class
+     * @var DynamicCSSCompiler The reference to *Singleton* instance of this class
      */
     private static $instance;
     
@@ -46,7 +46,7 @@ class DynamicCSSCompiler
     /**
      * Returns the *Singleton* instance of this class.
      *
-     * @return Singleton The *Singleton* instance.
+     * @return DynamicCSSCompiler The *Singleton* instance.
      */
     public static function get_instance()
     {
@@ -167,7 +167,7 @@ class DynamicCSSCompiler
      * 
      * @param array $style List of styles with the same structure as they are 
      * stored in $this->stylesheets
-     * @return type
+     * @return string The compiled CSS for this stylesheet
      */
     protected function get_compiled_style( $style )
     {
@@ -253,23 +253,27 @@ class DynamicCSSCompiler
             ")*)".                      // Allow for 0 or more piped filters
             "#",                        // End
             
-            function( $matches ) use ( $callback, $filters ) {
+            function( $matches ) use ( $callback, $filters ) 
+            {
+                $subscripts = array();
+                
                 // If this variable is an array, get the subscripts
                 if( '' !== $matches[2] )
                 {
                     preg_match_all('/[\w-]+/i', $matches[2], $subscripts);
                 }
                 
-                $val = call_user_func_array( $callback, array($matches[1],@$subscripts[0]) );
+                $val = call_user_func_array( $callback, array( $matches[1],@$subscripts[0] ) );
                 
                 // Apply custom filters
                 if( '' !== $matches[3] )
                 {
-                    $val = $this->apply_filters( substr($matches[3], 1), $val, $filters );
+                    $val = $this->apply_filters( substr( $matches[3], 1 ), $val, $filters );
                 }
                 
                 return $val;
-        }, $css);
+            }, $css
+        );
     }
     
     /**
