@@ -58,10 +58,10 @@ if( !function_exists('wp_dynamic_css_clear_cache') )
     /**
      * Clear the cached compiled CSS for the given handle.
      * 
-     * Initially, registered dynamic stylesheets are compiled and stored in cache.
-     * Subsequesnt requests are served statically from cache until 
-     * wp_dynamic_css_clear_cache() is called and clears it, forcing the compiler
-     * to recompile the CSS.
+     * Registered dynamic stylesheets that have the $cache flag set to true are
+     * compiled only once and then stored in cache. Subsequesnt requests are 
+     * served statically from cache until wp_dynamic_css_clear_cache() is called 
+     * and clears it, forcing the compiler to recompile the CSS.
      * 
      * @param string $handle The name of the stylesheet to be cleared from cache
      */

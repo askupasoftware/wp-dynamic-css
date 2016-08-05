@@ -2,8 +2,8 @@
 Contributors: Askupa Software, ykadosh
 Tags: dynamic css, css, customizer, get_theme_mod, css variables, css compiler
 Requires at least: 3.0
-Tested up to: 4.5.1
-Stable tag: 1.0.4
+Tested up to: 4.5.3
+Stable tag: 1.0.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -31,7 +31,7 @@ wp_dynamic_css_enqueue( 'my_dynamic_style', 'path/to/my-style.css' );
 // 3. Set the callback function (used to convert variables to actual values)
 function my_dynamic_css_callback( $var_name )
 {
-   return get_theme_mod($var_name);
+    return get_theme_mod($var_name);
 }
 wp_dynamic_css_set_callback( 'my_dynamic_style', 'my_dynamic_css_callback' );
 
@@ -42,7 +42,7 @@ Then, create a file called `my-style.css` and write this in it:
 
 <pre>
 body {
-   background-color: $body_bg_color;
+    background-color: $body_bg_color;
 }
 </pre>
 
@@ -52,7 +52,16 @@ Now, let's say that <code>get_theme_mod('body_bg_color')</code> returns the valu
 
 <pre>
 body {
-   background-color: #fff;
+    background-color: #fff;
+}
+</pre>
+
+There's even support for array subscripts and piped filters:
+
+<pre>
+body {
+    background-color: $myVar['index'];
+    color: $myVar|myFilter;
 }
 </pre>
 
@@ -69,6 +78,12 @@ You can find detailed documentation on how to use this library on the [GitHub pa
 Please follow the instructions on the plugin's [GitHub page](https://github.com/askupasoftware/wp-dynamic-css) for detailed explanation and examples.
 
 == Changelog ==
+
+= 1.0.5 =
+* (NEW) Added support for cache
+* (NEW) Added support for piped filters
+* (FIX) Separated enqueued stylesheets
+* (FIX) Increased priority of enqueued stylesheets to override static stylesheets
 
 = 1.0.4 =
 * (FIX) Set cache-control to no-cache so that changes to options are reflected immediately
