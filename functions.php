@@ -71,3 +71,47 @@ if( !function_exists('wp_dynamic_css_clear_cache') )
         $cache->clear( $handle );
     }
 }
+
+if( !function_exists('wp_dynamic_css_register_filter') )
+{
+    /**
+     * Register a filter function for a given stylesheet handle.
+     * 
+     * For example, a registered filter named 'myFilter' can be used in a dynamic
+     * CSS file like so:
+     * 
+     * <pre>
+     * body {
+     *     $myVar|myFilter
+     * }
+     * </pre>
+     * 
+     * Filters can also accept arguments:
+     * 
+     * <pre>
+     * body {
+     *     $myVar|myFilter('1',2,3.4)
+     * }
+     * </pre>
+     * 
+     * And can be stacked together:
+     * 
+     * <pre>
+     * body {
+     *     $myVar|myFilter1|filter2|filter3
+     * }
+     * </pre>
+     * 
+     * @param string $handle The handle of the stylesheet in which this filter 
+     * is to be used.
+     * @param string $filter_name The name of the filter to be used in the 
+     * dynamic CSS file.
+     * @param Callable $callback The actual filter function. Accepts the $value
+     * as an argument. Should return the filtered value.
+     */
+    function wp_dynamic_css_register_filter( $handle, $filter_name, $callback )
+    {
+        $dcss = DynamicCSSCompiler::get_instance();
+        $dcss->register_filter( $handle, $filter_name, $callback );
+    }
+}

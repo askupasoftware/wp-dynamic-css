@@ -34,9 +34,14 @@ class DynamicCSSCompiler
     private $stylesheets = array();
     
     /**
-     * @var array 
+     * @var array The list of registered callbacks
      */
     private $callbacks = array();
+    
+    /**
+     * @var aray The list of registered filters
+     */
+    private $filters = array();
     
     /**
      * Returns the *Singleton* instance of this class.
@@ -145,6 +150,18 @@ class DynamicCSSCompiler
     }
     
     /**
+     * Register a filter function for a given stylesheet handle.
+     */
+    public function register_filter( $handle, $filter_name, $callback )
+    {
+        if( !array_key_exists( $handle, $this->filters ) )
+        {
+            $this->filters[$handle] = array();
+        }
+        $this->filters[$handle][$filter_name] = $callback;
+    }
+    
+    /**
      * Get the compiled CSS for the given style. Skips compilation if the compiled
      * version can be found in cache.
      * 
@@ -156,6 +173,7 @@ class DynamicCSSCompiler
     {
         $cache = DynamicCSSCache::get_instance();
         
+        // Use cached compiled CSS if applicable
         if( $style['cache'] )
         {
             $cached_css = $cache->get( $style['handle'] );
@@ -167,7 +185,14 @@ class DynamicCSSCompiler
 
         $css = file_get_contents( $style['path'] );
         if( $style['minify'] ) $css = $this->minify_css( $css );
-        $compiled_css = $this->compile_css( $css, $this->callbacks[$style['handle']] );
+        
+        // Compile the dynamic CSS
+        $compiled_css = $this->compile_css( 
+            $css, 
+            $this->callbacks[$style['handle']], 
+            key_exists( $style['handle'], $this->filters ) ? $this->filters[$style['handle']] : array()
+        );
+        
         $cache->update( $style['handle'], $compiled_css );
         return $compiled_css;
     }
@@ -214,15 +239,80 @@ class DynamicCSSCompiler
      * @return string The compiled CSS after converting the variables to their 
      * corresponding values
      */
-    protected function compile_css( $css, $callback )
+    protected function compile_css( $css, $callback, $filters )
     {
-        return preg_replace_callback( "#\\$([\\w-]+)((?:\\['?[\\w-]+'?\\])*)#", function( $matches ) use ( $callback ) {
-            // If this variable is an array, get the subscripts
-            if( '' !== $matches[2] )
-            {
-                preg_match_all('/[\w-]+/i', $matches[2], $subscripts);
-            }
-            return call_user_func_array( $callback, array($matches[1],@$subscripts[0]) );
+        return preg_replace_callback( 
+                
+            "#".                        // Begin
+            "\\$".                      // Must start with $
+            "([\\w-]+)".                // Match alphanumeric characters and dashes
+            "((?:\\['?[\\w-]+'?\\])*)". // Optionally match array subscripts i.e. $myVar['index']
+            "((?:".                     // Optionally match pipe filters i.e. $myVar|myFilter
+                "\\|[\\w-]+".           // Starting with the | character
+                "(\([\w\.,']+\))?".     // Filters can have strings and numbers i.e myFilter('string',1,2.5)
+            ")*)".                      // Allow for 0 or more piped filters
+            "#",                        // End
+            
+            function( $matches ) use ( $callback, $filters ) {
+                // If this variable is an array, get the subscripts
+                if( '' !== $matches[2] )
+                {
+                    preg_match_all('/[\w-]+/i', $matches[2], $subscripts);
+                }
+                
+                $val = call_user_func_array( $callback, array($matches[1],@$subscripts[0]) );
+                
+                // Apply custom filters
+                if( '' !== $matches[3] )
+                {
+                    $val = $this->apply_filters( substr($matches[3], 1), $val, $filters );
+                }
+                
+                return $val;
         }, $css);
+    }
+    
+    /**
+     * Apply the filters specified in $filters_string to the given $value.
+     * 
+     * @param string $filters_string 
+     * @param string $value
+     * @param array $filters Array of callback functions
+     * @return string The value after all filters have been applied
+     */
+    protected function apply_filters( $filters_string, $value, $filters )
+    {
+        foreach( explode( '|', $filters_string) as $filter )
+        {
+            $args = array( $value );
+            
+            if( false !== strrpos( $filters_string, "(" ) )
+            {
+                $pieces = explode( '(', $filter );
+                $filter = $pieces[0];
+                $params = explode( ',', str_replace( ')', '', $pieces[1] ) );
+                array_walk( $params, array( $this, 'strtoval' ) ); // Convert string values to actual values
+                $args = array_merge( $args, $params );
+            }
+            
+            if( key_exists( $filter, $filters ) )
+            {
+                $value = call_user_func_array( $filters[$filter], $args );
+            }
+        }
+        return $value;
+    }
+    
+    /**
+     * Convert the given string to its actual value.
+     * 
+     * @param string $str The string to be converted (passed by reference)
+     */
+    protected function strtoval( &$str )
+    {
+        if( 'false' === strtolower($str) ) $str = false;
+        if( 'true' === strtolower($str) ) $str = true;
+        if( false !== strrpos( $str, "'" ) ) $str = str_replace ( "'", "", $str );
+        if( is_numeric( $str ) ) $str = floatval( $str );
     }
 }
