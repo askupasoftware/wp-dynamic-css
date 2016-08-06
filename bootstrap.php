@@ -43,7 +43,6 @@ require_once 'functions.php';
  * styles.
  */
 $dcss = DynamicCSSCompiler::get_instance();
-add_action( 'wp_print_styles', array( $dcss, 'print_styles' ), 100 );
 add_action( 'wp_enqueue_scripts', array( $dcss, 'enqueue_styles' ), 100 );
 add_action( 'wp_ajax_wp_dynamic_css', array( $dcss, 'ajax_callback' ) );
 add_action( 'wp_ajax_nopriv_wp_dynamic_css', array( $dcss, 'ajax_callback' ) );
