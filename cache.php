@@ -57,7 +57,7 @@ class DynamicCSSCache
      * Update the compiled CSS for the given handle.
      * 
      * @param string $handle The handle of the stylesheet
-     * @param type $compiled_css
+     * @param string $compiled_css
      */
     public function update( $handle, $compiled_css )
     {

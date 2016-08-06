@@ -58,7 +58,7 @@ class DynamicCSSCompiler
     }
     
     /**
-     * Enqueue the stylesheets that are registered to be loaded externally
+     * Enqueue all registered stylesheets.
      */
     public function enqueue_styles()
     {
@@ -72,8 +72,9 @@ class DynamicCSSCompiler
     }
     
     /**
+     * Enqueue a single registered stylesheet.
      * 
-     * @param type $stylesheet
+     * @param array $stylesheet
      */
     public function enqueue_style( $stylesheet )
     {
@@ -88,7 +89,8 @@ class DynamicCSSCompiler
 
         wp_enqueue_style( $handle );
         
-        if( $stylesheet['print'] )
+        // Add inline styles for styles that are set to be printed
+        if( $print )
         {
             // Inline styles only work if the handle has already been registered and enqueued
             wp_add_inline_style( $handle, $this->get_compiled_style( $stylesheet ) );
@@ -140,8 +142,8 @@ class DynamicCSSCompiler
     /**
      * Register a value retrieval function and associate it with the given handle
      * 
-     * @param type $handle The stylesheet's name/id
-     * @param type $callback
+     * @param string $handle The stylesheet's name/id
+     * @param callable $callback
      */
     public function register_callback( $handle, $callback )
     {
@@ -189,7 +191,7 @@ class DynamicCSSCompiler
         $compiled_css = $this->compile_css( 
             $css, 
             $this->callbacks[$style['handle']], 
-            key_exists( $style['handle'], $this->filters ) ? $this->filters[$style['handle']] : array()
+            (array) @$this->filters[$style['handle']]
         );
         
         $cache->update( $style['handle'], $compiled_css );
@@ -315,7 +317,7 @@ class DynamicCSSCompiler
      * @param array $filters Array of callback functions
      * @return string The value after all filters have been applied
      */
-    protected function apply_filters( $filters_string, $value, $filters )
+    protected function apply_filters( $filters_string, $value, $filters = array() )
     {
         foreach( explode( '|', $filters_string) as $filter )
         {
