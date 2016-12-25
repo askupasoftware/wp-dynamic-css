@@ -32,9 +32,9 @@ define( 'WP_DYNAMIC_CSS', true );
 /**
  * Load required files
  */
-require_once 'compiler.php';
-require_once 'cache.php';
-require_once 'functions.php';
+require_once dirname(__FILE__).'/compiler.php';
+require_once dirname(__FILE__).'/cache.php';
+require_once dirname(__FILE__).'/functions.php';
 
 /**
  * The following actions are used for printing or loading the compiled 
@@ -43,7 +43,6 @@ require_once 'functions.php';
  * styles.
  */
 $dcss = DynamicCSSCompiler::get_instance();
-add_action( 'wp_print_styles', array( $dcss, 'print_styles' ), 100 );
 add_action( 'wp_enqueue_scripts', array( $dcss, 'enqueue_styles' ), 100 );
 add_action( 'wp_ajax_wp_dynamic_css', array( $dcss, 'ajax_callback' ) );
 add_action( 'wp_ajax_nopriv_wp_dynamic_css', array( $dcss, 'ajax_callback' ) );

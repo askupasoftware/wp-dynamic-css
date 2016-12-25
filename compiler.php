@@ -58,40 +58,42 @@ class DynamicCSSCompiler
     }
     
     /**
-     * Enqueue the stylesheets that are registered to be loaded externally
+     * Enqueue all registered stylesheets.
      */
     public function enqueue_styles()
     {
         foreach( $this->stylesheets as $stylesheet )
         {
-            if( !$stylesheet['print'] && $this->callback_exists( $stylesheet['handle'] ) )
+            if( $this->callback_exists( $stylesheet['handle'] ) )
             {
-                wp_enqueue_style( 
-                    'wp-dynamic-css-'.$stylesheet['handle'],
-                    esc_url_raw( add_query_arg(array(
-                        'action' => 'wp_dynamic_css',
-                        'handle' => $stylesheet['handle']
-                    ), admin_url( 'admin-ajax.php')))
-                );
+                $this->enqueue_style( $stylesheet );
             }
         }
     }
     
     /**
-     * Print the stylesheets that are registered to be printed to the document head
+     * Enqueue a single registered stylesheet.
+     * 
+     * @param array $stylesheet
      */
-    public function print_styles()
-    {        
-        foreach( $this->stylesheets as $stylesheet )
-        {
-            if( $stylesheet['print'] && $this->callback_exists( $stylesheet['handle'] ) )
-            {
-                $compiled_css = $this->get_compiled_style( $stylesheet );
+    public function enqueue_style( $stylesheet )
+    {
+        $handle = 'wp-dynamic-css-'.$stylesheet['handle'];
+        $print  = $stylesheet['print'];
         
-                echo "<style id=\"wp-dynamic-css-".$stylesheet['handle']."\">\n";
-                include 'style.phtml';
-                echo "\n</style>\n";
-            }
+        wp_register_style( 
+            $handle,
+            // Don't pass a URL if this style is to be printed
+            $print ? false : $this->get_ajax_callback_url( $stylesheet['handle'] )
+        );
+
+        wp_enqueue_style( $handle );
+        
+        // Add inline styles for styles that are set to be printed
+        if( $print )
+        {
+            // Inline styles only work if the handle has already been registered and enqueued
+            wp_add_inline_style( $handle, $this->get_compiled_style( $stylesheet ) );
         }
     }
     
@@ -108,8 +110,7 @@ class DynamicCSSCompiler
         {
             if( $handle === $stylesheet['handle'] )
             {
-                $compiled_css = $this->get_compiled_style( $stylesheet );
-                include 'style.phtml';
+                echo $this->get_compiled_style( $stylesheet );
             }
         }
         
@@ -127,7 +128,7 @@ class DynamicCSSCompiler
      * @param boolean $cache Whether to store the compiled version of this 
      * stylesheet in cache to avoid compilation on every page load.
      */
-    public function enqueue_style( $handle, $path, $print, $minify, $cache )
+    public function register_style( $handle, $path, $print, $minify, $cache )
     {
         $this->stylesheets[] = array(
             'handle'=> $handle,
@@ -141,8 +142,8 @@ class DynamicCSSCompiler
     /**
      * Register a value retrieval function and associate it with the given handle
      * 
-     * @param type $handle The stylesheet's name/id
-     * @param type $callback
+     * @param string $handle The stylesheet's name/id
+     * @param callable $callback
      */
     public function register_callback( $handle, $callback )
     {
@@ -190,11 +191,43 @@ class DynamicCSSCompiler
         $compiled_css = $this->compile_css( 
             $css, 
             $this->callbacks[$style['handle']], 
-            key_exists( $style['handle'], $this->filters ) ? $this->filters[$style['handle']] : array()
+            (array) @$this->filters[$style['handle']]
         );
         
         $cache->update( $style['handle'], $compiled_css );
-        return $compiled_css;
+        return $this->add_meta_info( $compiled_css );
+    }
+    
+    /**
+     * Add meta information to the compiled CSS
+     * 
+     * @param string $compiled_css The compiled CSS
+     * @return string The compiled CSS with the meta information added to it
+     */
+    protected function add_meta_info( $compiled_css )
+    {
+        return "/**\n".
+               " * Compiled using wp-dynamic-css\n".
+               " * https://github.com/askupasoftware/wp-dynamic-css\n".
+               " */\n\n".
+               $compiled_css;
+    }
+    
+    /**
+     * Get the callback URL for enqueuing the stylesheet extrnally
+     * 
+     * @param string $handle The stylesheet's handle
+     * @return string The URL for the given handle
+     */
+    protected function get_ajax_callback_url( $handle )
+    {
+        return esc_url_raw( 
+            add_query_arg(array(
+                'action' => 'wp_dynamic_css',
+                'handle' => $handle
+            ), 
+            admin_url( 'admin-ajax.php'))
+        );
     }
     
     /**
@@ -265,7 +298,7 @@ class DynamicCSSCompiler
                 
                 $val = call_user_func_array( $callback, array( $matches[1],@$subscripts[0] ) );
                 
-                // Apply custom filters
+                // If there are filters, apply them
                 if( '' !== $matches[3] )
                 {
                     $val = $this->apply_filters( substr( $matches[3], 1 ), $val, $filters );
@@ -284,7 +317,7 @@ class DynamicCSSCompiler
      * @param array $filters Array of callback functions
      * @return string The value after all filters have been applied
      */
-    protected function apply_filters( $filters_string, $value, $filters )
+    protected function apply_filters( $filters_string, $value, $filters = array() )
     {
         foreach( explode( '|', $filters_string) as $filter )
         {

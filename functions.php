@@ -27,7 +27,7 @@ if( !function_exists('wp_dynamic_css_enqueue') )
     function wp_dynamic_css_enqueue( $handle, $path, $print = true, $minify = false, $cache = false )
     {
         $dcss = DynamicCSSCompiler::get_instance();
-        $dcss->enqueue_style( $handle, $path, $print, $minify, $cache );
+        $dcss->register_style( $handle, $path, $print, $minify, $cache );
     }
 }
 
