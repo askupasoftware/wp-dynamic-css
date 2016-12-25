@@ -4,7 +4,7 @@ A library for generating static stylesheets from dynamic content, to be used in 
 
 **Contributors:** ykadosh  
 **Tags:** theme, mods, wordpress, dynamic, css, stylesheet  
-**Tested up to:** 4.5.3  
+**Tested up to:** 4.7  
 **Stable tag:** 1.0.5  
 **Requires:** PHP 5.3.0 or newer  
 **WordPress plugin:** [wordpress.org/plugins/wp-dynamic-css/](https://wordpress.org/plugins/wp-dynamic-css/)  
