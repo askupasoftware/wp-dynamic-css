@@ -2,8 +2,8 @@
 Contributors: Askupa Software, ykadosh
 Tags: dynamic css, css, customizer, get_theme_mod, css variables, css compiler
 Requires at least: 3.0
-Tested up to: 4.7
-Stable tag: 1.0.5
+Tested up to: 4.8
+Stable tag: 1.0.6
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -11,8 +11,8 @@ Dynamic CSS compiler for WordPress themes and plugins
 
 == Description ==
 
-**WordPress Dynamic CSS** is a lightweight library for generating CSS stylesheets from dynamic content (i.e. content that can be modified by the user). 
-The most obvious use case for this library is for creating stylesheets based on Customizer options. 
+**WordPress Dynamic CSS** is a lightweight library for generating CSS stylesheets from dynamic content (i.e. content that can be modified by the user).
+The most obvious use case for this library is for creating stylesheets based on Customizer options.
 Using the special dynamic CSS syntax you can write CSS rules with variables that will be replaced by static values using a custom callback function that you provide.
 
 **As of version 1.0.2** this plugin supports multiple callback functions, thus making it safe to use by multiple plugins/themes at the same time.
@@ -78,7 +78,10 @@ You can find detailed documentation on how to use this library on the [GitHub pa
 Please follow the instructions on the plugin's [GitHub page](https://github.com/askupasoftware/wp-dynamic-css) for detailed explanation and examples.
 
 == Changelog ==
-
+= 1.0.6 =
+* Use transient instead of option as cache. Transients are inherently sped up by caching plugins, where normal Options are not.
+* Add `$deps` to `wp_dynamic_css_enqueue`, $deps is an array of registered stylesheet handles this stylesheet depends on.
+* Reformat code according to [WPCS](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards)
 = 1.0.5 =
 * (NEW) Added support for cache
 * (NEW) Added support for piped filters
@@ -103,4 +106,3 @@ Please follow the instructions on the plugin's [GitHub page](https://github.com/
 * Initial release
 
 == Upgrade Notice ==
-
