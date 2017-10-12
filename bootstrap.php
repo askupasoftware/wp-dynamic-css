@@ -26,18 +26,20 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 /**
  * Prevent loading the library more than once
  */
-if( defined( 'WP_DYNAMIC_CSS' ) ) return;
+if ( defined( 'WP_DYNAMIC_CSS' ) ) {
+	return;
+}
 define( 'WP_DYNAMIC_CSS', true );
 
 /**
  * Load required files
  */
-require_once dirname(__FILE__).'/compiler.php';
-require_once dirname(__FILE__).'/cache.php';
-require_once dirname(__FILE__).'/functions.php';
+require_once dirname( __FILE__ ) . '/compiler.php';
+require_once dirname( __FILE__ ) . '/cache.php';
+require_once dirname( __FILE__ ) . '/functions.php';
 
 /**
- * The following actions are used for printing or loading the compiled 
+ * The following actions are used for printing or loading the compiled
  * stylesheets externally.
  * Priority is set to high (100) to allow the dynamic CSS to override static
  * styles.
