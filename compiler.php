@@ -184,7 +184,15 @@ class DynamicCSSCompiler
             }
         }
 
-        $css = file_get_contents( $style['path'] );
+        $context_options = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ),
+        );
+
+        $css = file_get_contents( $style['path'], false, stream_context_create($context_options) );
+        
         if( $style['minify'] ) $css = $this->minify_css( $css );
         
         // Compile the dynamic CSS
