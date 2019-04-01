@@ -214,10 +214,10 @@ class DynamicCSSCompiler
      */
     protected function add_meta_info( $compiled_css )
     {
-        return "/**\n".
+        return apply_filters('wp_dynamic_css_meta_info', "/**\n".
                " * Compiled using wp-dynamic-css\n".
                " * https://github.com/askupasoftware/wp-dynamic-css\n".
-               " */\n\n".
+               " */\n\n" ).
                $compiled_css;
     }
     
